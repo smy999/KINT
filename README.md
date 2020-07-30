@@ -41,7 +41,7 @@ To do this, we build 2 model that first model is detecting newly coined word and
    - Our crawlers search a word in each commnuity and collect head, body, comment, datetime.
 
 2. Text data preprocessing
-   - we may nomalize text data and analyze morpheme with our word dictionary.
+   - we may nomalize text data and analyze morpheme with corresponding word.
    - c.f) our word dictionary consists of detected newly coined words.
 
 3. Model building step
