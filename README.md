@@ -25,15 +25,15 @@ To do this, we build 2 model that first model is detecting newly coined word and
     - Othewise, they are used at next step (2).
 
 3. Model building step
-    - (1)
-    	- we will apply word2vector to vectorize word data.
-	- Then, we calculate similarity between word data.
-	- If newly coined word have highly similarity, we apply clustering technique to word data.
-	- Otherwise, we apply classficiation technique to word data.
+    - (1)  
+    - we will apply word2vector to vectorize word data.
+    - Then, we calculate similarity between word data.
+    - If newly coined word have highly similarity, we apply clustering technique to word data.
+    - Otherwise, we apply classficiation technique to word data.
 	
 	
-    - (2)
-    	- we analyze time-series data to find newly coined word.
+    - (2)  
+    - we analyze time-series data to find newly coined word.
 
 4. We apply step 1,2,3 repeatedly.
 
