@@ -9,9 +9,7 @@ To do this, we build 2 model that first model is detecting newly coined word and
 
 1. Data collecting step
     - we uses web crawlers for each sector.
-    - This crawlers collect head text data and datetime data.
-    
-    
+    - This crawlers collect head text data and datetime data.  
     - Humor Crawler : natepan (10대이야기, 20대이야기, 톡커들의 선택 명예의 전당 (일별)), todayhumor (베오베, 베스트게시물), ilbe (일베-일간베스트)
     - politic Crawler : ilbe (정치/시사), 보배드림 (정치)
     - Entertainment Crawler : dcinside (인방갤, 야구갤러리, 연예인), instize (이슈)
