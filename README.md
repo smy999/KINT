@@ -2,7 +2,7 @@
 
 Korea Univ. Bigdata campus project
 
-This project's purpose is making of newly coined word dictionary and automating of updating this.
+This project's purpose is making of newly coined word dictionary and automating of updating this.  
 To do this, we build 2 model that first model is detecting newly coined word and second model is extracting social meaning of the word.
 
 ## Newly Coined Word Detecting Model
