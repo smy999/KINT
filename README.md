@@ -1,5 +1,4 @@
 # Amanbo Sinsa
-----------------------------------
 
 Korea Univ. Bigdata campus project
 
