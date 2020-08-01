@@ -1,11 +1,21 @@
-# bigdata_project
+# Amanbo Sinsa
+----------------------------------
 
 Korea Univ. Bigdata campus project
 
-This project's purpose is making of newly coined word dictionary and automating of updating this.  
+This service is provided on the website and provides interpretations and example sentences for new words, as well as the frequency of famous community sites, the top 5 newly detected new words, and emotional analysis results of the new words.
+
+ Through this, Amanbo Shrine aims to contribute the linguistic, social, and public fields that have difficulties in interpreting the new word by providing new word information as an API.
+
+The purpose of this project is to create a newly created dictionary of words and automatically update them.
+
 To do this, we build 2 model that first model is detecting newly coined word and second model is extracting social meaning of the word.
 
-## Newly Coined Word Detecting Model
+# Progress
+
+This project consists of two models:
+
+## Mode 1. Newly Coined Word Detecting Model
 
 1. Data collecting step
     - we uses web crawlers for each sector.
@@ -28,13 +38,12 @@ To do this, we build 2 model that first model is detecting newly coined word and
     	- If newly coined word have highly similarity, we apply clustering technique to word data.
     	- Otherwise, we apply classficiation technique to word data.
 	
-	
     - (2)  In Standard Korean Language Dictionary
     	- we analyze time-series data to find newly coined word.
 
 4. We apply step 1,2,3 repeatedly.
 
-## Socical Meaning Extracting Model
+## Model 2. Socical Meaning Extracting Model
 
 1. Data collecting step
    - Our crawlers search a word in each commnuity and collect head, body, comment, datetime.
@@ -45,3 +54,10 @@ To do this, we build 2 model that first model is detecting newly coined word and
 
 3. Model building step
    - we apply attention technique to extract social meaning of the word.
+
+# Contribute
+
+smy999 210112yynim@naver.com
+
+
+
