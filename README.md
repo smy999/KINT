@@ -4,7 +4,7 @@ Korea Univ. Bigdata campus project
 
 This service is provided on the website and provides interpretations and example sentences for new words, as well as the frequency of famous community sites, the top 5 newly detected new words, and emotional analysis results of the new words.
 
- Through this, Amanbo Shrine aims to contribute the linguistic, social, and public fields that have difficulties in interpreting the new word by providing new word information as an API.
+Through this, Amanbo Shrine aims to contribute the linguistic, social, and public fields that have difficulties in interpreting the new word by providing new word information as an API.
 
 The purpose of this project is to create a newly created dictionary of words and automatically update them.
 
@@ -19,10 +19,11 @@ This project consists of two models:
 1. Data collecting step
     - we uses web crawlers for each sector.
     - This crawlers collect head text data and datetime data.  
-    	- Humor Crawler : natepan (10대이야기, 20대이야기, 톡커들의 선택 명예의 전당 (일별)), todayhumor (베오베, 베스트게시물), ilbe (일베-일간베스트), dcinside (야구갤러리), ppomppu (자유게시판)
-    	- politic Crawler : ilbe (정치/시사), 보배드림 (정치)
-    	- Entertainment Crawler : dcinside (인방갤, 연예인), instize (이슈)
+    	- Humor Crawler : natepan (10대이야기, 20대이야기, 톡커들의 선택 명예의 전당 (일별)), todayhumor (베오베, 베스트게시물), ilbe (일베-일간베스트), dcinside (야구갤러리)
+    	- politic Crawler : ilbe (정치/시사), 보배드림 (정치), naver (뉴스)
+    	- Entertainment Crawler : dcinside (인방갤, 연예인), instize (이슈), naver (뉴스)
     	- Mom Crawler : 맘스홀릭 베이비 (자유수다방)
+	- shopping Crawler: ppomppu (자유게시판)
     
 2. Text data preprocessing step
     - We may use soynlp library to extract words.
