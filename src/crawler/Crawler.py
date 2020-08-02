@@ -131,10 +131,12 @@ class PCrawler:
             urls = list()
             seen = list()
             seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=200 ORDER BY wdate DESC').fetchone()[0]
+            seen_date = seen_date[5:7] + '/' + seen_date[8:]
 
             urls.append(url)
 
             count = 0
+            varbreak = 0
 
             while urls:
                 try:
@@ -156,18 +158,21 @@ class PCrawler:
                     if len(head) == len(date):
                         for _ in range(0, len(date)):
                             if re.search(r'/', date[_]):
-                                if date[_] > seen_date[5:]:
+                                if date[_] > seen_date:
                                     self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,200)',
                                                      [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
                                                       re.search(r'page=(\d+)', urlparse(seed)[4]).group(1)])
                                     self.conn.commit()
                                 else:
+                                    varbreak = 1
                                     break
                             else:
                                 self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,200)',
                                                  [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
                                                   re.search(r'page=(\d+)', urlparse(seed)[4]).group(1)])
                                 self.conn.commit()
+                        if varbreak == 1:
+                            break
 
                     if count % 100 == 0:
                         print(count)
@@ -175,7 +180,7 @@ class PCrawler:
                 except Exception as e:
                     print(e)
         else:
-            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=200 ORDER BY pk').fetchall()]
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=200').fetchall()]
             url = seen[
                 -1] if seen else 'https://www.bobaedream.co.kr/list?code=politic&s_cate=&maker_no=&model_no=&or_gu=10&or_se=desc&s_selday=&pagescale=30&info3=&noticeShow=&s_select=&s_key=&level_no=&vdate=&type=list&page=1'
 
@@ -252,6 +257,7 @@ class PCrawler:
             page.append(1)
 
             count = page[0]
+            varbreak = 0
 
             while page:
                 try:
@@ -275,19 +281,22 @@ class PCrawler:
 
                     if len(head) == len(date):
                         for _ in range(0, len(date)):
-                            if re.search(r'/', date[_]):
+                            if re.search(r'-', date[_]):
                                 if date[_] > seen_date:
                                     self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,201)',
                                                      [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
                                                       params['page']])
                                     self.conn.commit()
                                 else:
+                                    varbreak = 1
                                     break
                             else:
                                 self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,201)',
                                                  [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
                                                   params['page']])
                                 self.conn.commit()
+                        if varbreak == 1:
+                            break
 
                     if count % 100 == 0:
                         print(count)
@@ -333,6 +342,142 @@ class PCrawler:
                             self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,201)',
                                         [head[_], date[_], str(datetime.datetime.now()).split('.')[0], params['page']])
                             self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+class HCrawler:
+    def __init__(self):
+        self.conn = sqlite3.connect('Humor.db')
+        self.cur = self.conn.cursor()
+
+    def resetdb(self):
+        self.cur.executescript('''
+            DROP TABLE IF EXISTS head;
+            CREATE TABLE head(
+                pk INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                head TEXT NOT NULL,
+                wdate TEXT NOT NULL,
+                cdate TEXT NOT NULL,
+                ref INTEGER NOT NULL,
+                page INTEGER NOT NULL
+            );
+
+            DROP TABLE IF EXISTS history;
+            CREATE TABLE history(
+                pk INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                seen TEXT NOT NULL,
+                ref INTEGER NOT NULL
+            )
+        ''')
+
+    def ou(self,bob=True,recent=True):
+        if recent:
+            url = 'http://www.todayhumor.co.kr/board/list.php?table=bestofbest&page=1' if bob else 'http://www.todayhumor.co.kr/board/list.php?table=humorbest&page=1'
+
+            urls = list()
+            seen = list()
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=1 ORDER BY wdate DESC').fetchone()[0] if bob else self.cur.execute('SELECT wdate FROM head WHERE ref=2 ORDER BY wdate DESC').fetchone()[0]
+
+            urls.append(url)
+
+            count = 0
+            varbreak = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    seen.append(seed)
+
+                    resp = download(seed)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('tbody > tr:nth-of-type(33) a')
+                              if _.has_attr('href') and re.match(r'(^l.+)', _['href']).group()]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('td.subject > a')]
+                    date = [_.text.strip() for _ in dom.select('tbody > tr > td.date')]
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            if date[_] > seen_date:
+                                if bob:
+                                    self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,1)',
+                                                     [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                      re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                    self.conn.commit()
+                                else:
+                                    self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,2)',
+                                                [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                 re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                    self.conn.commit()
+                            else:
+                                varbreak = 1
+                                break
+                        if varbreak == 1:
+                            break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+        else:
+            if bob:
+                seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=1').fetchall()]
+                url = seen[-1] if seen else 'http://www.todayhumor.co.kr/board/list.php?table=bestofbest&page=1'
+            else:
+                seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=2').fetchall()]
+                url = seen[-1] if seen else 'http://www.todayhumor.co.kr/board/list.php?table=humorbest&page=1'
+
+            urls = list()
+
+            urls.append(url)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    if seed not in seen:
+                        seen.append(seed)
+                        if bob:
+                            self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 1)', [seed])
+                        else:
+                            self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 2)', [seed])
+                        self.conn.commit()
+
+                    resp = download(seed)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('tbody > tr:nth-of-type(33) a')
+                              if _.has_attr('href') and re.match(r'(^l.+)', _['href']).group()]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('td.subject > a')]
+                    date = [_.text.strip() for _ in dom.select('tbody > tr > td.date')]
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            if bob:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,1)',
+                                            [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                             re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                self.conn.commit()
+                            else:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,2)',
+                                            [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                             re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                self.conn.commit()
 
                     if count % 100 == 0:
                         print(count)
