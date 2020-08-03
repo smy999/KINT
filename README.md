@@ -55,6 +55,12 @@ This project consists of two models:
 3. Model building step
    - we apply attention technique to extract social meaning of the word.
 
+# API
+
+1. soynlp
+   - https://github.com/lovit/soynlp.git
+
+
 # Contribute
 
 - smy999 210112yynim@naver.com
