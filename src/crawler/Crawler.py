@@ -264,8 +264,6 @@ class PCrawler:
                     params['page'] = page.pop(0)
                     count += 1
                     seen.append(params['page'])
-                    self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,201)', [params['page']])
-                    self.conn.commit()
 
                     resp = download(url, params=params, method='GET')
                     dom = BeautifulSoup(resp.text, 'lxml')
@@ -312,7 +310,7 @@ class PCrawler:
             }
 
             page = list()
-            page.append(int(seen[-1][0])) if seen else page.append(1)
+            page.append(int(seen[-1])) if seen else page.append(1)
 
 
             count = page[0]
@@ -321,9 +319,10 @@ class PCrawler:
                 try:
                     params['page'] = page.pop(0)
                     count += 1
-                    seen.append(params['page'])
-                    self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,201)', [params['page']])
-                    self.conn.commit()
+                    if params['page'] not in seen:
+                        seen.append(params['page'])
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,201)', [params['page']])
+                        self.conn.commit()
 
                     resp = download(url, params=params, method='GET')
                     dom = BeautifulSoup(resp.text, 'lxml')
@@ -484,3 +483,547 @@ class HCrawler:
 
                 except Exception as e:
                     print(e)
+
+    def ilbe_date_update(self):
+        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=3').fetchall()]
+        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=3').fetchall()]
+        cdate = pd.DataFrame(cdate)[0]
+        wdate = pd.DataFrame(wdate)[0]
+        try:
+            # 당일 수집된 데이터 날짜 수정
+            today = \
+                pd.DataFrame(['{}'.format(cdate[_][:10]) for _ in range(0, len(wdate)) if re.search(r':', wdate[_])])[0]
+            wdate_index = pd.DataFrame([_ for _ in range(0, len(wdate)) if re.search(r':', wdate[_])])[0]
+            # 데이터 update
+            for _ in range(0, len(today)):
+                self.cur.execute('UPDATE head SET wdate="%s" WHERE wdate="%s"' % (today[_], wdate[wdate_index[_]]))
+                self.conn.commit()
+        except:
+            print('오늘 수집된 데이터가 없습니다.')
+        finally:
+            print('update 완료')
+
+
+    def ilbe(self, recent=True):
+        if recent:
+            url = 'https://www.ilbe.com/list/ilbe'
+            params = {
+                'page': '',
+                'listStyle': 'list',
+            }
+
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=3 ORDER BY wdate DESC').fetchone()[0]
+            seen = list()
+            page = list()
+            page.append(1)
+
+            count = page[0]
+            varbreak = 0
+
+            while page:
+                try:
+                    params['page'] = page.pop(0)
+                    count += 1
+                    seen.append(params['page'])
+
+                    resp = download(url, params=params, method='GET')
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    if '{}'.format(count) in [_.text.strip() for _ in dom.select('.paginate > a') if
+                                              _.has_attr('class') == False]:
+                        page.append(count)
+                    if count % 10 == 1:
+                        page.append(count)
+
+                    head = [_.text.strip() for _ in dom.select('.board-body .subject') if _.has_attr('style') == False]
+                    date = [_.text.strip() for _ in dom.select('li > .date')][7:]
+
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            if re.search(r'-', date[_]):
+                                if date[_] > seen_date:
+                                    self.cur.execute(
+                                        'INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,3)',
+                                        [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                         params['page']])
+                                    self.conn.commit()
+                                else:
+                                    varbreak = 1
+                                    break
+                            else:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,3)',
+                                                 [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                  params['page']])
+                                self.conn.commit()
+                        if varbreak == 1:
+                            break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+        else:
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=3').fetchall()]
+            url = 'https://www.ilbe.com/list/ilbe'
+            params = {
+                'page': '',
+                'listStyle': 'list',
+            }
+
+            page = list()
+            page.append(int(seen[-1])) if seen else page.append(1)
+
+            count = page[0]
+
+            while page:
+                try:
+                    params['page'] = page.pop(0)
+                    count += 1
+                    if params['page'] not in seen:
+                        seen.append(params['page'])
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,3)', [params['page']])
+                        self.conn.commit()
+
+                    resp = download(url, params=params, method='GET')
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    if '{}'.format(count) in [_.text.strip() for _ in dom.select('.paginate > a') if
+                                              _.has_attr('class') == False]:
+                        page.append(count)
+                    if count % 10 == 1:
+                        page.append(count)
+
+                    head = [_.text.strip() for _ in dom.select('.board-body .subject') if _.has_attr('style') == False]
+                    date = [_.text.strip() for _ in dom.select('li > .date')][7:]
+
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,3)',
+                                             [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                              params['page']])
+                            self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+    def dc(self, recent=True):
+        if recent:
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=4 ORDER BY wdate DESC').fetchone()[0]
+
+            url = 'https://gall.dcinside.com/board/lists/?id=baseball_new9&page=1'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36'}
+
+            urls = list()
+            seen = list()
+
+            urls.append(url)
+
+            count = 0
+            varbreak = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+                    seen.append(seed)
+
+                    for _ in [_['href'] for _ in dom.select('div.bottom_paging_box > a')
+                              if _.has_attr('href') and re.match(r'(?:https?:/)?/\w+(?:[./]\w+)+', _['href']).group()
+                                 and _.text.strip() != '처음' and _.text.strip() != '이전']:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [i.text.strip() for _ in dom.select('tr.ub-content.us-post') if
+                            _['data-type'] in ['icon_pic', 'icon_txt'] for i in
+                            _.select('td:nth-of-type(2) > a:nth-of-type(1)')]
+                    wdate = [i['title'] for _ in dom.select('tr.ub-content.us-post') if
+                             _['data-type'] in ['icon_pic', 'icon_txt'] for i in _.select('td.gall_date')]
+                    if len(head) == len(wdate):
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('page=(\d+)', urlparse(seed).query).group(1)
+                        for _ in range(0, len(head)):
+                            if wdate[_] > seen_date:
+                                self.cur.execute('''
+                                                INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,4)
+                                                ''', [head[_], wdate[_], cdate, page])
+                                self.conn.commit()
+                            else:
+                                varbreak = 1
+                                break
+                        if varbreak == 1:
+                            break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+        else:
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=4').fetchall()]
+            url = seen[-1] if seen else 'https://gall.dcinside.com/board/lists/?id=baseball_new9&page=1'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36'}
+
+            urls = list()
+
+            urls.append(url)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                            INSERT INTO history(seen,ref) VALUES(?,4)
+                        ''', [seed])
+                        self.conn.commit()
+
+                    for _ in [_['href'] for _ in dom.select('div.bottom_paging_box > a')
+                              if _.has_attr('href') and re.match(r'(?:https?:/)?/\w+(?:[./]\w+)+', _['href']).group()
+                              and _.text.strip() != '처음' and  _.text.strip() != '이전']:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [i.text.strip() for _ in dom.select('tr.ub-content.us-post') if
+                            _['data-type'] in ['icon_pic', 'icon_txt'] for i in
+                            _.select('td:nth-of-type(2) > a:nth-of-type(1)')]
+                    wdate = [i['title'] for _ in dom.select('tr.ub-content.us-post') if
+                             _['data-type'] in ['icon_pic', 'icon_txt'] for i in _.select('td.gall_date')]
+                    if len(head) == len(wdate):
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('page=(\d+)', urlparse(seed).query).group(1)
+                        for _ in range(0, len(head)):
+                            self.cur.execute('''
+                                INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,4)
+                                ''', [head[_], wdate[_], cdate, page])
+                            self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+    def ppomppu(self, recent=True):
+        if recent:
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=5 ORDER BY wdate DESC').fetchone()[0]
+            url = 'http://www.ppomppu.co.kr/zboard/zboard.php?id=freeboard&page=1&divpage=1321'
+            headers = {'user-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0'}
+            urls = list()
+            seen = list()
+
+            urls.append(url)
+
+            count = 0
+            varbreak = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    seen.append(seed)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('#page_list a')
+                              if _.has_attr('href') and re.match(r'(?:https?:/)?/?\w+(?:[./]\w+)+', _['href'])]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('tr[class^=list] a > font') if
+                            _.find('img') == None or _.find('img').has_attr('style') == False]
+                    date = [_['title'] for _ in dom.select('tr[class^=list] td.eng') if
+                            _.has_attr('title') and _['title'][:2] != '13']
+
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            if date[_] > seen_date:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,5)',
+                                                 [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                  re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                self.conn.commit()
+                            else:
+                                varbreak = 1
+                                break
+                        if varbreak == 1:
+                            break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+        else:
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=5').fetchall()]
+            url = seen[-1] if seen else 'http://www.ppomppu.co.kr/zboard/zboard.php?id=freeboard&page=1&divpage=1321'
+            headers = {'user-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0'}
+            urls = list()
+
+            urls.append(url)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 5)', [seed])
+                        self.conn.commit()
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('#page_list a')
+                              if _.has_attr('href') and re.match(r'(?:https?:/)?/?\w+(?:[./]\w+)+', _['href'])]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('tr[class^=list] a > font') if
+                            _.find('img') == None or _.find('img').has_attr('style') == False]
+                    date = [_['title'] for _ in dom.select('tr[class^=list] td.eng') if
+                            _.has_attr('title') and _['title'][:2] != '13']
+
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,5)',
+                                        [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                         re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                            self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+    def nate_date_update(self, teen=True):
+        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=6').fetchall()] if teen else [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=7').fetchall()]
+        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=6').fetchall()] if teen else [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=7').fetchall()]
+        cdate = pd.DataFrame(cdate)[0]
+        wdate = pd.DataFrame(wdate)[0]
+        try:
+            # 당일 수집된 데이터 날짜 수정
+            today = \
+                pd.DataFrame(['{0}.{1}.{2}'.format(cdate[_][:4], cdate[_][5:7], cdate[_][8:10]) for _ in range(0, len(wdate)) if re.search(r':', wdate[_])])[0]
+            wdate_index = pd.DataFrame([_ for _ in range(0, len(wdate)) if re.search(r':', wdate[_])])[0]
+            # 데이터 update
+            for _ in range(0, len(today)):
+                self.cur.execute('UPDATE head SET wdate="%s" WHERE wdate="%s"' % (today[_], wdate[wdate_index[_]]))
+                self.conn.commit()
+        except:
+            print('오늘 수집된 데이터가 없습니다.')
+        finally:
+            print('update 완료')
+
+    def nate(self, teen=True , recent=True):
+        if recent:
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=6 ORDER BY wdate DESC').fetchone()[0] if teen else self.cur.execute('SELECT wdate FROM head WHERE ref=7 ORDER BY wdate DESC').fetchone()[0]
+            if teen:
+                url = 'https://pann.nate.com/talk/c20038?page=1'
+            else:
+                url = 'https://pann.nate.com/talk/c20002?page=1'
+
+            urls = list()
+            seen = list()
+
+            urls.append(url)
+
+            count = 0
+            varbreak = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    seen.append(seed)
+
+                    resp = download(seed)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('div.paginate > a.paging')
+                              if _.has_attr('href') and re.match(r'(?:https?:/)?/?\w+(?:[./]\w+)+', _['href'])]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('tbody td.subject > a')]
+                    date = [_.text.strip() for _ in dom.select('tbody > tr > td:nth-of-type(4)')]
+
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            if re.search(r'[.]', date[_]):
+                                if date[_] > seen_date:
+                                    if teen:
+                                        self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,6)',
+                                                         [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                          re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                    else:
+                                        self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,7)',
+                                                         [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                          re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                    self.conn.commit()
+                                else:
+                                    varbreak = 1
+                                    break
+                            else:
+                                if teen:
+                                    self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,6)',
+                                                     [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                      re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                else:
+                                    self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,7)',
+                                                     [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                      re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                                self.conn.commit()
+                        if varbreak == 1:
+                            break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+        else:
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=6').fetchall()] if teen else [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=7').fetchall()]
+            if teen:
+                url = seen[-1] if seen else 'https://pann.nate.com/talk/c20038?page=1'
+            else:
+                url = seen[-1] if seen else 'https://pann.nate.com/talk/c20002?page=1'
+
+            urls = list()
+
+            urls.append(url)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,6)', [seed]) if teen else self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,7)', [seed])
+                        self.conn.commit()
+
+                    resp = download(seed)
+                    dom = BeautifulSoup(resp.text, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('div.paginate > a.paging')
+                              if _.has_attr('href') and re.match(r'(?:https?:/)?/?\w+(?:[./]\w+)+', _['href'])]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('tbody td.subject > a')]
+                    date = [_.text.strip() for _ in dom.select('tbody > tr > td:nth-of-type(4)')]
+
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            if teen:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,6)',
+                                            [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                             re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                            else:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,7)',
+                                        [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                         re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                            self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+    def nate_talker(self, recent=True):
+        seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=8').fetchall()]
+
+        if recent:
+            url = 'https://pann.nate.com/talk/ranking/d?stdt=20200730&page=1'
+            tempdate = str(datetime.datetime.now()).split('.')[0]
+            url = urljoin(url,
+                          'd?stdt={}&page={}'.format(str(int(tempdate[:4] + tempdate[5:7] + tempdate[8:10]) - 1), 1))
+        else:
+            if seen:
+                url = seen[-1]
+            else:
+                url = 'https://pann.nate.com/talk/ranking/d?stdt=20200730&page=1'
+                tempdate = str(datetime.datetime.now()).split('.')[0]
+                url = urljoin(url, 'd?stdt={}&page={}'.format(
+                    str(int(tempdate[:4] + tempdate[5:7] + tempdate[8:10]) - 1), 1))
+
+        urls = list()
+
+        urls.append(url)
+
+        count = 0
+
+        while urls:
+            try:
+                count += 1
+                seed = urls.pop(0)
+                if seed not in seen:
+                    seen.append(seed)
+                    self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,8)', [seed])
+                    self.conn.commit()
+
+                resp = download(seed)
+                dom = BeautifulSoup(resp.text, 'lxml')
+
+                if re.search(r'page=(\d+)', urlparse(seed)[4]).group(1) == '1':
+                    # page 넘기기
+                    stdt = re.search(r",'(\d+)',(\d+)", str(dom.select_one('button.last'))).group(1)
+                    page = re.search(r",'(\d+)',(\d+)", str(dom.select_one('button.last'))).group(2)
+                    newUrls = urljoin(url, 'd?stdt={}&page={}'.format(stdt, page))
+
+                    if newUrls not in urls and newUrls not in seen:
+                        urls.append(newUrls)
+
+                if re.search(r'page=(\d+)',urlparse(seed)[4]).group(1) == '2':
+                    # 이전 날짜로 가기
+                    stdt = re.search(r",'(\d+)',(\d+)", str(dom.select_one('button.prev'))).group(1)
+                    page = re.search(r",'(\d+)',(\d+)", str(dom.select_one('button.prev'))).group(2)
+                    newUrls = urljoin(url, 'd?stdt={}&page={}'.format(stdt, page))
+
+                    if newUrls not in urls and newUrls not in seen:
+                        urls.append(newUrls)
+
+                head = [_.text.strip() for _ in dom.select('ul.post_wrap > li dt > a')]
+                date = dom.select_one('span.tdate').text.strip()
+
+                if head:
+                    for _ in range(0, len(head)):
+                        self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,8)',
+                                         [head[_], date, str(datetime.datetime.now()).split('.')[0],
+                                          re.search(r'=(\d+)', urlparse(seed)[4]).group(1)])
+                        self.conn.commit()
+
+                if count % 100 == 0:
+                    print(count)
+
+            except Exception as e:
+                print(e)
