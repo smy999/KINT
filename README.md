@@ -58,7 +58,7 @@ This project consists of two models:
 # Contribute
 
 - smy999 210112yynim@naver.com
-
 - wtt5857 wtt5857@naver.com
+- yujuyeon0511 juyeon.yu0511@gmail.com
 
 
