@@ -58,8 +58,9 @@ This project consists of two models:
 # API
 
 1. soynlp
-   - https://github.com/lovit/soynlp.git
-
+- https://github.com/lovit/soynlp.git
+2. 국립국어원 표준국어대사전 표제어 DB(잇다)
+- https://github.com/korean-word-game/db
 
 # Contribute
 
