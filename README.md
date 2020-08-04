@@ -55,9 +55,18 @@ This project consists of two models:
 3. Model building step
    - we apply attention technique to extract social meaning of the word.
 
+# API
+
+1. soynlp
+   - https://github.com/lovit/soynlp.git
+2. 국립국어원 표준국어대사전 표제어 DB(잇다)
+   - https://github.com/korean-word-game/db
+
 # Contribute
 
-smy999 210112yynim@naver.com
-
+- smy999 210112yynim@naver.com
+- wtt5857 wtt5857@naver.com
+- yujuyeon0511 dbwndus7501@naver.com
+- Kimyungi gozj3319@naver.com
 
 
