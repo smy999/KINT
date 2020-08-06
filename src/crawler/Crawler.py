@@ -1244,7 +1244,7 @@ class ECrawler:
             pages.append('1')
             seen = list()
 
-            count = 0
+            count = int(pages[0])
             varbreak = 0
 
             while pages:
@@ -1258,13 +1258,8 @@ class ECrawler:
                     if params['page'] not in seen:
                         seen.append(params['page'])
 
-                    for _ in [_.text.strip() for _ in dom.select('#indextable a') if _.has_attr('href')]:
-                        if re.search(r'(\d+)', _):
-                            if _ not in seen and _ not in pages:
-                                pages.append(_)
-                        elif re.search(r'다음', _):
-                            if str(int(pages[-1]) + 1) not in seen and str(int(pages[-1]) + 1) not in pages:
-                                pages.append(str(int(pages[-1]) + 1))
+                    if '다음' in [_.text.strip() for _ in dom.select('#indextable a') if _.has_attr('href')]:
+                        pages.append(str(count))
 
                     if dom.select('#subject > a') != None:
                         head = [_.text.strip() for _ in dom.select('#subject > a')]
@@ -1300,7 +1295,7 @@ class ECrawler:
             pages.append(seen[-1]) if seen else pages.append('1')
 
 
-            count = 0
+            count = int(pages[0])
 
             while pages:
                 try:
@@ -1310,18 +1305,15 @@ class ECrawler:
                     resp = download(url, params=params)
                     dom = BeautifulSoup(resp.text, 'html.parser')
 
+
                     if params['page'] not in seen:
                         seen.append(params['page'])
                         self.cur.execute('INSERT INTO history(seen, ref) VALUES(?,103)', [params['page']])
                         self.conn.commit()
 
-                    for _ in [_.text.strip() for _ in dom.select('#indextable a') if _.has_attr('href')]:
-                        if re.search(r'(\d+)', _):
-                            if _ not in seen and _ not in pages:
-                                pages.append(_)
-                        elif re.search(r'다음', _):
-                            if str(int(pages[-1]) + 1) not in seen and str(int(pages[-1]) + 1) not in pages:
-                                pages.append(str(int(pages[-1]) + 1))
+
+                    if '다음' in [_.text.strip() for _ in dom.select('#indextable a') if _.has_attr('href')]:
+                        pages.append(str(count))
 
                     if dom.select('#subject > a') != None:
                         head = [_.text.strip() for _ in dom.select('#subject > a')]
