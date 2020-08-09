@@ -29,13 +29,13 @@ class Ext:
     def extract_nouns(self):
         if len(self.df) < 2000000:
             tempary = np.linspace(0, 1, 11)
-            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001)) for
+            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001 * 0.1)) for
                      _ in
                      [self.df.iloc[math.ceil(len(self.df) * tempary[_]):math.ceil(len(self.df) * tempary[_ + 1])] for _ in
                       range(len(tempary) - 1)]]
         elif len(self.df) < 5000000:
             tempary = np.linspace(0, 1, 21)
-            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001))
+            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001 * 0.05))
                      for
                      _ in
                      [self.df.iloc[math.ceil(len(self.df) * tempary[_]):math.ceil(len(self.df) * tempary[_ + 1])] for _
@@ -43,7 +43,7 @@ class Ext:
                       range(len(tempary) - 1)]]
         else:
             tempary = np.linspace(0, 1, 41)
-            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001))
+            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001 * 0.025))
                      for
                      _ in
                      [self.df.iloc[math.ceil(len(self.df) * tempary[_]):math.ceil(len(self.df) * tempary[_ + 1])] for _
