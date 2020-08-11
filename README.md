@@ -44,16 +44,20 @@
 3. 신어 감지 단계
 	- 종속변수: 신어여부
 	- 독립변수
-		- left_frequency
-		- right_frequency
-		- cohesion_forward
-		- cohesion_backward
-		- left_accessor_variety
-		- right_accessor_variety
-		- left_branching_entropy
-		- right_branching_entropy
-		- right_post_postion_ratio
-		- right_whitespace_ratio
+
+		|독립변수|설명|
+		|:---|:---|
+		|left_frequency|용어가 어절의 왼쪽 부분에 등장한 횟수|
+		|right_frequency|용어가 어절의 오른쪽 부분에 등장한 횟수|
+		|cohesion_forward|어절의 왼쪽에서부터 용어가 함께 등장하는 정도|
+		|cohesion_backward|어절의 오른쪽에서부터 용어가 함께 등장하는 정도|
+		|left_accessor_variety|용어의 왼쪽에 등장하는 글자들의 종류|
+		|right_accessor_variety|용어의 오른쪽에 등장하는 글자들의 종류|
+		|left_branching_entropy|용어의 왼쪽에 등장하는 글자의 불확실성|
+		|right_branching_entropy|용어의 오른에 등장하는 글자의 불확실성|
+		|right_post_postion_ratio|용어의 오른쪽에 조사가 있을 비율|
+		|right_whitespace_ratio|의 오른쪽에 공백이 있을 비율|
+
 	- 위 종속변수, 독립변수를 학습된 분류 모델에 넣어 신어 여부 파악합니다.  
 
 4. 1,2,3 단계를 반복적으로 적용합니다.  
