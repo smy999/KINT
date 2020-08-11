@@ -59,8 +59,8 @@ class PCrawler:
         ''')
 
     def bobae_date_update(self):
-        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=200').fetchall()]
-        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=200').fetchall()]
+        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=200 ORDER BY wdate ASC').fetchall()]
+        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=200 ORDER BY wdate ASC').fetchall()]
         cdate = pd.DataFrame(cdate)[0]
         wdate = pd.DataFrame(wdate)[0]
         # 당일 수집된 데이터에 대한 날짜 수정
@@ -228,8 +228,8 @@ class PCrawler:
                     print(e)
 
     def ilbe_date_update(self):
-        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=201').fetchall()]
-        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=201').fetchall()]
+        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=201 ORDER BY wdate ASC').fetchall()]
+        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=201 ORDER BY wdate ASC').fetchall()]
         cdate = pd.DataFrame(cdate)[0]
         wdate = pd.DataFrame(wdate)[0]
         try:
@@ -489,8 +489,8 @@ class HCrawler:
                     print(e)
 
     def ilbe_date_update(self):
-        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=3').fetchall()]
-        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=3').fetchall()]
+        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=3 ORDER BY wdate ASC').fetchall()]
+        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=3 ORDER BY wdate ASC').fetchall()]
         cdate = pd.DataFrame(cdate)[0]
         wdate = pd.DataFrame(wdate)[0]
         try:
@@ -824,8 +824,8 @@ class HCrawler:
                     print(e)
 
     def nate_date_update(self, teen=True):
-        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=6').fetchall()] if teen else [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=7').fetchall()]
-        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=6').fetchall()] if teen else [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=7').fetchall()]
+        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=6 ORDER BY wdate ASC').fetchall()] if teen else [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=7').fetchall()]
+        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=6 ORDER BY wdate ASC').fetchall()] if teen else [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=7').fetchall()]
         cdate = pd.DataFrame(cdate)[0]
         wdate = pd.DataFrame(wdate)[0]
         try:
@@ -1213,8 +1213,8 @@ class ECrawler:
                     print(e)
 
     def instize_date_update(self):
-        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=103').fetchall()]
-        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=103').fetchall()]
+        cdate = [_[0] for _ in self.cur.execute('SELECT cdate FROM head WHERE ref=103 ORDER BY wdate ASC').fetchall()]
+        wdate = [_[0] for _ in self.cur.execute('SELECT wdate FROM head WHERE ref=103 ORDER BY wdate ASC').fetchall()]
         cdate = pd.DataFrame(cdate)[0]
         wdate = pd.DataFrame(wdate)[0]
         try:
