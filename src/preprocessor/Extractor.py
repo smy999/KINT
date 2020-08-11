@@ -27,30 +27,8 @@ class Ext:
         return self.df
 
     def extract_nouns(self):
-        if len(self.df) < 2000000:
-            tempary = np.linspace(0, 1, 11)
-            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001 * 0.1)) for
-                     _ in
-                     [self.df.iloc[math.ceil(len(self.df) * tempary[_]):math.ceil(len(self.df) * tempary[_ + 1])] for _ in
-                      range(len(tempary) - 1)]]
-        elif len(self.df) < 5000000:
-            tempary = np.linspace(0, 1, 21)
-            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001 * 0.05))
-                     for
-                     _ in
-                     [self.df.iloc[math.ceil(len(self.df) * tempary[_]):math.ceil(len(self.df) * tempary[_ + 1])] for _
-                      in
-                      range(len(tempary) - 1)]]
-        else:
-            tempary = np.linspace(0, 1, 41)
-            nouns = [self.noun_extractor.train_extract(_['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001 * 0.025))
-                     for
-                     _ in
-                     [self.df.iloc[math.ceil(len(self.df) * tempary[_]):math.ceil(len(self.df) * tempary[_ + 1])] for _
-                      in
-                      range(len(tempary) - 1)]]
-
-        words = {k: v for i in range(len(nouns)) for k, v in nouns[i].items() if len(k) > 1}
+        nouns = self.noun_extractor.train_extract(self.df['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001))
+        words = {k: v for k, v in nouns.items() if len(k) > 1}
         return words
 
     def search_dict(self, nouns):
@@ -69,7 +47,7 @@ class Ext:
     def extract_sent(self, words):
         sent = defaultdict(lambda: 0)
         for w in words[0]:
-            temp = [s for s in self.df['head'] if w in s]
+            temp = [s for s in self.df['head'] if w in s and np.random.uniform() > 0.5]
             sent[w] = '  '.join(temp)
         return sent
 
