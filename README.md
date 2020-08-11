@@ -17,7 +17,7 @@
 
 ## Model 1. 신어 감지 및 자동 분류 
 
-![model1](https://user-images.githubusercontent.com/33407191/89895976-a17e7800-dc17-11ea-8713-4733b2706b84.png)
+![model1](https://user-images.githubusercontent.com/33407191/89901561-39805f80-dc20-11ea-83c4-6b1b0418da7c.png)
 
 1. 데이터 수집 단계
     - 각 분야별 커뮤니티에서 웹 크롤러를 통해 데이터를 수집합니다.
@@ -101,7 +101,7 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
 
 ## Model 1. New internet terms detection and automatic classfication model  
 
-![model1](https://user-images.githubusercontent.com/33407191/89895976-a17e7800-dc17-11ea-8713-4733b2706b84.png)
+![model1](https://user-images.githubusercontent.com/33407191/89901561-39805f80-dc20-11ea-83c4-6b1b0418da7c.png)
 
 1. Data collecting Step
     - 각 분야별 커뮤니티에서 웹 크롤러를 통해 데이터를 수집합니다.
