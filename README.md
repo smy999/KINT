@@ -24,8 +24,8 @@
     - 이 크롤러는 제목 텍스트 데이터 및 날짜 / 시간 데이터를 수집합니다.
     - 유머 크롤러
       - natepan : 10 대 이야기, 20 대 이야기, 톡커들의 선택 명예의 전당 (일별)
-    	- 오늘 유머 : 베오베, 베스트 게시물
-	    - ilbe : 일베-일간 베스트
+      - 오늘 유머 : 베오베, 베스트 게시물
+      - ilbe : 일베-일간 베스트
       - dcinside : 야구 갤러리
       - ppomppu : 자유 게시판
     - 정치 크롤러
@@ -110,8 +110,8 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
     - This crawlers collect head data, datetime data
     - Humor Crawler
       - natepan : 10 대 이야기, 20 대 이야기, 톡커들의 선택 명예의 전당 (일별)
-    	- 오늘 유머 : 베오베, 베스트 게시물
-	    - ilbe : 일베-일간 베스트
+      - 오늘 유머 : 베오베, 베스트 게시물
+      - ilbe : 일베-일간 베스트
       - dcinside : 야구 갤러리
       - ppomppu : 자유 게시판
     - Politic Crawler
@@ -149,7 +149,7 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
 ![model2](https://user-images.githubusercontent.com/33407191/89896074-c8d54500-dc17-11ea-8867-98776b2b3011.png)
 
 1. Text data loading step
-  - We loads the text data containing the new internet terms detected in Model 1.
+   - We loads the text data containing the new internet terms detected in Model 1.
 
 2. Text data preprocessing step
    - Text data vectorize.
