@@ -64,7 +64,7 @@
 
 ## Model 2. 신어 분석 모델
 
-![model2](https://user-images.githubusercontent.com/33407191/89896074-c8d54500-dc17-11ea-8867-98776b2b3011.png)
+![model2](https://user-images.githubusercontent.com/33407191/89973742-13000a00-dc9c-11ea-82ea-a83393ac534d.png)
 
 1. 텍스트 데이터 불러오기
    - Model 1에서 감지된 신어가 포함된 텍스트 데이터를 불러옵니다.
@@ -153,7 +153,7 @@ For this, the 1st Model detects new internet terms, and the 2nd Model extracts s
 
 ## Model 2. New Internet terms analysis Model
 
-![model2](https://user-images.githubusercontent.com/33407191/89896074-c8d54500-dc17-11ea-8867-98776b2b3011.png)
+![model2](https://user-images.githubusercontent.com/33407191/89973742-13000a00-dc9c-11ea-82ea-a83393ac534d.png)
 
 1. Text data loading step
    - We load the text data containing the new internet terms detected in Model 1.
