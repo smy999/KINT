@@ -135,7 +135,7 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
   - Dependent Variable : Whether it is a new internet term
 	- Independent Variable
 	
-		|독립변수|설명|
+		|Independent Variable|Description|
 		|:---|:---|
 		|left_frequency|The number of times the term appears in the left part of the word|
 		|right_frequency|The number of times the term appears in the right part of the word|
