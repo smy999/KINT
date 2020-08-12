@@ -1,4 +1,4 @@
-# KITS(Korean Internet Term Search) :kr:
+# KINT(Korean Internet New Terms) :kr:
 
 ### 한국 인터넷 신어 API  
 
@@ -87,10 +87,10 @@
 	 
 	 
 	                                                                  
-# KITS(Korean Internet Term Search) :us:
+# KINT(Korean Internet New Terms) :us:
 
 
-### Korean Internet Term API  
+### Korean Internet New Terms API  
 
 Korea Univ Bigdata Campus Project  
 
