@@ -1,8 +1,12 @@
-# KITS(Korean Internet Term Search)  
+# KITS(Korean Internet Term Search) :kr:
 
 ### 한국 인터넷 신어 API  
 
-고려 대학교 빅데이터 캠퍼스 프로젝트
+:school:고려대학교 빅데이터 캠퍼스 프로젝트
+
+:date:프로젝트 일정: 2020년 7월 6일 ~ 2020년 8월 31일
+
+:smiley:
 
 이 서비스는 웹 사이트에서 제공되며 사용자가 많은 커뮤니티 사이트들에서 새롭게 감지된 상위 5개의 새로운 단어 및 새로운 단어의 감성 분석 결과뿐만 아니라 새로운 단어에 대한 예제 문장을 제공합니다.
 
@@ -83,7 +87,7 @@
 	 
 	 
 	                                                                  
-# KITS(Korean Internet Term Search)  
+# KITS(Korean Internet Term Search) :us:
 
 
 ### Korean Internet Term API  
