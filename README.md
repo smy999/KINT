@@ -24,15 +24,15 @@
     - 이 크롤러는 제목 텍스트 데이터 및 날짜 / 시간 데이터를 수집합니다.
     - 유머 크롤러
       - natepan : 10 대 이야기, 20 대 이야기, 톡커들의 선택 명예의 전당 (일별)
-      - 오늘 유머 : 베오베, 베스트 게시물
+      - 오늘의 유머 : 베오베, 베스트 게시물
       - ilbe : 일베-일간 베스트
       - dcinside : 야구 갤러리
       - ppomppu : 자유 게시판
     - 정치 크롤러
-      - 일베 (정치 / 시사)
-      - 보배 드림 (정치)
+      - 일베 : 정치 / 시사게시판
+      - 보배드림 : 정치커뮤니티
     - 엔터테인먼트 크롤러
-      - dcinside : 인터넷방송 갤러리, 남자/여자연예인 갤러
+      - dcinside : 인터넷방송 갤러리, 남자/여자연예인 갤러리
       - instize : 이슈  
     
 2. 텍스트 데이터 전처리 단계
@@ -108,19 +108,17 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
 ![model1](https://user-images.githubusercontent.com/33407191/89901561-39805f80-dc20-11ea-83c4-6b1b0418da7c.png)
 
 1. Data collecting Step
-    - 각 분야별 커뮤니티에서 웹 크롤러를 통해 데이터를 수집합니다.
     - Web crawlers collect data at each sector community
-    - 이 크롤러는 제목 텍스트 데이터 및 날짜 / 시간 데이터를 수집합니다.
     - This crawlers collect head data, datetime data
     - Humor Crawler
       - natepan : 10 대 이야기, 20 대 이야기, 톡커들의 선택 명예의 전당 (일별)
-      - 오늘 유머 : 베오베, 베스트 게시물
+      - 오늘의 유머 : 베오베, 베스트 게시물
       - ilbe : 일베-일간 베스트
       - dcinside : 야구 갤러리
       - ppomppu : 자유 게시판
     - Politic Crawler
-      - 일베 (정치 / 시사)
-      - 보배 드림 (정치)
+      - 일베 : 정치 / 시사게시판
+      - 보배드림 : 정치커뮤니티
     - Entertainment Crawler
       - dcinside : 인터넷방송 갤러리, 남자/여자연예인 갤러리
       - instize : 이슈  
@@ -139,7 +137,7 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
 		|:---|:---|
 		|left_frequency|The number of times the term appears in the left part of the word|
 		|right_frequency|The number of times the term appears in the right part of the word|
-		|cohesion_forward|The degree to which terms appear together from the left side of the word.|
+		|cohesion_forward|The degree to which terms appear together from the left side of the word|
 		|cohesion_backward|The degree to which terms appear together from the right side of the word|
 		|left_accessor_variety|Types of letters appearing on the left side of the term|
 		|right_accessor_variety|Types of letters appearing on the right side of the term|
