@@ -90,26 +90,26 @@
 
 Korea Univ Bigdata Campus Project  
 
-This service provide top 5-newly detected internet terms, sentiment analysis of newly detected internet terms and example sentence of newly detected internet terms in the website.  
+This service provides the top 5-newly detected internet terms, sentiment analysis of newly detected internet terms, and example sentence of newly detected internet terms on the website.  
 
 Through this, KITS aims to contribute to Natural Language Processing, Linguistics, Social and Public sectors that have difficulty interpreting new internet terms by providing new internet terms information through API.  
 
 
-This project automatically detect new internet terms and update this in our dictionary.  
+This project automatically detects new internet terms and updates this in our dictionary.  
 
               
-For this, 1st Model detect new internet terms and 2nd Model extract sentiment analysis of them and example sentence of them.  
+For this, the 1st Model detects new internet terms, and the 2nd Model extracts sentiment analysis of them an example sentence of them.  
 
 # Progress   
 ![system](https://user-images.githubusercontent.com/33407191/89900519-cf1aef80-dc1e-11ea-97ab-e201765e17ca.png)
 
-## Model 1. New internet terms detection and automatic classfication model  
+## Model 1. New internet terms detection and automatic classification model  
 
 ![model1](https://user-images.githubusercontent.com/33407191/89901561-39805f80-dc20-11ea-83c4-6b1b0418da7c.png)
 
 1. Data collecting Step
     - Web crawlers collect data at each sector community
-    - This crawlers collect head data, datetime data
+    - These crawlers collect head data, DateTime data
     - Humor Crawler
       - natepan : 10 대 이야기, 20 대 이야기, 톡커들의 선택 명예의 전당 (일별)
       - 오늘의 유머 : 베오베, 베스트 게시물
@@ -126,11 +126,11 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
 2. Text data preprocessing step
     - We use the soynlp library to extract terms.
     - Extract terms are searched in the electronic dictionary of the National Institute of Korean Language.
-    - If not in electronic dictionary of the National Institute of Korean Language, it will be used in the next step.
+    - If not in the electronic dictionary of the National Institute of Korean Language, it will be used in the next step.
     - If it is in the electronic dictionary of the National Institute of Korean Language, it is judged that it is not a new internet term.  
 
 3. New internet word detecting step
-  - Dependent Variable : Whether it is a new internet term
+  - Dependent Variable: Whether it is a new internet term
 	- Independent Variable
 	
 		|Independent Variable|Description|
@@ -156,15 +156,14 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
 ![model2](https://user-images.githubusercontent.com/33407191/89896074-c8d54500-dc17-11ea-8867-98776b2b3011.png)
 
 1. Text data loading step
-   - We loads the text data containing the new internet terms detected in Model 1.
+   - We load the text data containing the new internet terms detected in Model 1.
 
 2. Text data preprocessing step
    - Text data vectorize.
 
 3. Sentiment analysis and example sentence extracting step
    - We use semi-supervised learning and LSTM Model for sentiment analysis
-   - We use N-gram and Byte Pair Encoding (BPE) for extracting of example sentence  
-
+   - We use N-gram and Byte Pair Encoding (BPE) for extracting of the example sentence
 
 
                                                                                                               
