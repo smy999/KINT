@@ -56,7 +56,7 @@
 		|left_branching_entropy|용어의 왼쪽에 등장하는 글자의 불확실성|
 		|right_branching_entropy|용어의 오른에 등장하는 글자의 불확실성|
 		|right_post_postion_ratio|용어의 오른쪽에 조사가 있을 비율|
-		|right_whitespace_ratio|의 오른쪽에 공백이 있을 비율|
+		|right_whitespace_ratio|용어의 오른쪽에 공백이 있을 비율|
 
 	- 위 종속변수, 독립변수를 학습된 분류 모델에 넣어 신어 여부 파악합니다.  
 
@@ -134,16 +134,21 @@ For this, 1st Model detect new internet terms and 2nd Model extract sentiment an
 3. New internet word detecting step
   - Dependent Variable : Whether it is a new internet term
 	- Independent Variable
-		- left_frequency
-		- right_frequency
-		- cohesion_forward
-		- cohesion_backward
-		- left_accessor_variety
-		- right_accessor_variety
-		- left_branching_entropy
-		- right_branching_entropy
-		- right_post_postion_ratio
-		- right_whitespace_ratio
+	
+		|독립변수|설명|
+		|:---|:---|
+		|left_frequency|The number of times the term appears in the left part of the word|
+		|right_frequency|The number of times the term appears in the right part of the word|
+		|cohesion_forward|The degree to which terms appear together from the left side of the word.|
+		|cohesion_backward|The degree to which terms appear together from the right side of the word|
+		|left_accessor_variety|Types of letters appearing on the left side of the term|
+		|right_accessor_variety|Types of letters appearing on the right side of the term|
+		|left_branching_entropy|Uncertainty in the letters to the left of the term|
+		|right_branching_entropy|Uncertainty in the letters to the right of the term|
+		|right_post_postion_ratio|Percentage of surveys to the right of the term|
+		|right_whitespace_ratio|Percentage of spaces to the right of the term|
+
+		
   - Put the above dependent and independent variables into the learned classification model to determine whether it is a new internet term or not  
 
 4. We apply step 1,2,3 repeatedly.  
