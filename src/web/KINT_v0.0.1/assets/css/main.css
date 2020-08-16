@@ -3390,8 +3390,11 @@ table.alt tbody tr td {
 
 }
 
-#kint{
+#kint {
 	padding: 40px;
+	background-color: #ffffff;
+	background-color: rgb(255, 255, 255, 0.5);
+	margin-top: 10%;
 }
 
 /*#kint header.major h2:after, article.special header.major h2:after {*/
@@ -3399,8 +3402,9 @@ table.alt tbody tr td {
 /*	margin-right: auto;*/
 /*}*/
 
+
 #kint header.major p {
-	font-size: 1.1em;
+	font-size: 1em;
 	letter-spacing: -0.025em;
 }
 
