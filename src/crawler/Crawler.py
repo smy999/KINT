@@ -1331,3 +1331,235 @@ class ECrawler:
 
                 except Exception as e:
                     print(e)
+
+
+class NCrawler:
+    def __init__(self):
+        self.conn = sqlite3.connect('News.db')
+        self.cur = self.conn.cursor()
+
+    def resetdb(self):
+        self.cur.executescript('''
+                    DROP TABLE IF EXISTS head;
+                    CREATE TABLE head(
+                        pk INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        head TEXT NOT NULL,
+                        wdate TEXT NOT NULL,
+                        cdate TEXT NOT NULL,
+                        ref INTEGER NOT NULL,
+                        page INTEGER NOT NULL
+                    );
+
+                    DROP TABLE IF EXISTS history;
+                    CREATE TABLE history(
+                        pk INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        seen TEXT NOT NULL,
+                        ref INTEGER NOT NULL
+                    )
+                ''')
+
+    def han(self,recent=True):
+        if recent:
+            url = 'http://www.hani.co.kr/arti/list1.html'
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=300 ORDER BY wdate DESC').fetchone()[0]
+            urls = list()
+            seen = list()
+
+            urls.append(url)
+
+            count = 0
+            varbreak = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 300)', [seed])
+                        self.conn.commit()
+
+                    resp = download(seed)
+                    dom = BeautifulSoup(resp.content, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('.paginate > a') if
+                              _.has_attr('href') and re.match(r'(?:[?./=&_]+\w+)+', _['href'])]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('.article-title > a')]
+                    date = [_.text.strip() for _ in dom.select('.article-prologue > .date')]
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            if date[_] > seen_date:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,300)',
+                                                 [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                                  re.search(r'list(\d+)', seed).group(1)])
+                                self.conn.commit()
+                            else:
+                                varbreak = 1
+                                break
+                        if varbreak == 1:
+                            break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+        else:
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=300').fetchall()]
+            url = seen[-1] if seen else 'http://www.hani.co.kr/arti/list1.html'
+
+            urls = list()
+
+            urls.append(url)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 300)', [seed])
+                        self.conn.commit()
+
+                    resp = download(seed)
+                    dom = BeautifulSoup(resp.content, 'lxml')
+
+                    for _ in [_['href'] for _ in dom.select('.paginate > a') if _.has_attr('href') and re.match(r'(?:[?./=&_]+\w+)+', _['href'])]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    head = [_.text.strip() for _ in dom.select('.article-title > a')]
+                    date = [_.text.strip() for _ in dom.select('.article-prologue > .date')]
+                    if len(head) == len(date):
+                        for _ in range(0, len(date)):
+                            self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,300)',
+                                        [head[_], date[_], str(datetime.datetime.now()).split('.')[0],
+                                         re.search(r'list(\d+)', seed).group(1)])
+                            self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+
+    def khan(self, recent=True):
+        if recent:
+            url = 'http://www.khan.co.kr/bestnews/khan_art_list_new.html'
+            params = {
+                'media': 'khan',
+                'depth3': 'bestnews',
+                'year': '',
+                'month': '',
+                'day': ''
+            }
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'}
+            seen = list()
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=301 ORDER BY wdate DESC').fetchone()[0]
+            seen_date = [int(_) for _ in seen_date.split('-')]
+            seen_date = datetime.date(seen_date[0], seen_date[1], seen_date[2])
+            base = datetime.datetime.today()
+            date_list = [base - datetime.timedelta(days=x) for x in range(365)]
+            count = 0
+            varbreak = 0
+
+            while date_list:
+                try:
+                    count += 1
+                    seed = date_list.pop(0).date()
+                    if seed not in seen:
+                        seen.append(seed)
+                        params['year'] = seed.year
+                        if len(str(seed.month)) == 1:
+                            params['month'] = '0' + str(seed.month)
+                        else:
+                            params['month'] = str(seed.month)
+                        if len(str(seed.day)) == 1:
+                            params['day'] = '0' + str(seed.day)
+                        else:
+                            params['day'] = str(seed.day)
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 301)', [seed])
+                        self.conn.commit()
+
+                    resp = download(url, params=params, headers=headers, method='POST')
+                    dom = BeautifulSoup(resp.content, 'lxml')
+
+                    head = [_.text.strip() for _ in dom.select('.list_cm > li > a')]
+                    for _ in range(0, len(head)):
+                        if seed > seen_date:
+                            self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,300)',
+                                        [head[_], seed, str(datetime.datetime.now()).split('.')[0],
+                                         0])
+                            self.conn.commit()
+                        else:
+                            varbreak = 1
+                            break
+                    if varbreak == 1:
+                        break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
+        else:
+            url = 'http://www.khan.co.kr/bestnews/khan_art_list_new.html'
+            params = {
+                'media': 'khan',
+                'depth3': 'bestnews',
+                'year': '',
+                'month': '',
+                'day': ''
+            }
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'}
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=301').fetchall()]
+            base = seen[-1] if seen else datetime.datetime.today()
+            if seen:
+                base = [int(_) for _ in base.split('-')]
+                base = datetime.datetime(base[0], base[1], base[2])
+            date_list = [base - datetime.timedelta(days=x) for x in range(365)]
+            count = 0
+
+            while date_list:
+                try:
+                    count += 1
+                    seed = date_list.pop(0).date()
+                    if seed not in seen:
+                        seen.append(seed)
+                        params['year'] = seed.year
+                        if len(str(seed.month)) == 1:
+                            params['month'] = '0' + str(seed.month)
+                        else:
+                            params['month'] = str(seed.month)
+                        if len(str(seed.day)) == 1:
+                            params['day'] = '0' + str(seed.day)
+                        else:
+                            params['day'] = str(seed.day)
+                        self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 301)', [seed])
+                        self.conn.commit()
+
+                    resp = download(url, params=params, headers=headers, method='POST')
+                    dom = BeautifulSoup(resp.content, 'lxml')
+
+                    head = [_.text.strip() for _ in dom.select('.list_cm > li > a')]
+                    for _ in range(0, len(head)):
+                        self.cur.execute('INSERT INTO head(head, wdate, cdate,page, ref) VALUES(?,?,?,?,301)',
+                                    [head[_], seed, str(datetime.datetime.now()).split('.')[0],
+                                     0])
+                        self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print(e)
