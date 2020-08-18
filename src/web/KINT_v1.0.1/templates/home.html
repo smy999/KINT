@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>KINT</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <link rel="stylesheet" href="../static/js/main.js" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <noscript><link rel="stylesheet" href="../static/css/noscript.css" /></noscript>
+</head>
+
+<!-- Nav -->
+<nav id="nav">
+    <ul>
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#first">Search</a></li>
+        <li><a href="#second">Open API</a></li>
+        <li><a href="#cta">Contact</a></li>
+    </ul>
+
+</nav>
+
+
+
+<body class="is-preload">
+
+<main>
+    <div class="container">
+        <div class="carousel slide" id="main-carousel" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#main-carousel" data-slide-to="0" class="active"></li>
+                <li data-target="#main-carousel" data-slide-to="1"></li>
+                <li data-target="#main-carousel" data-slide-to="2"></li>
+                <li data-target="#main-carousel" data-slide-to="3"></li>
+            </ol><!-- /.carousel-indicators -->
+
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="d-block img-fluid" src="../static/images/why.png" alt="">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h1></h1>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block img-fluid" src="https://s19.postimg.cc/lmubh3h0j/slide2.jpg" alt="">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3>KINT API</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem fugit, numquam minus!</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block img-fluid" src="https://s19.postimg.cc/99hh9lr5v/slide3.jpg" alt="">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3>Search Service</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem fugit, numquam minus!</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://s19.postimg.cc/nenabzsnn/slide4.jpg" alt="" class="d-block img-fluid">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h3>ME JUNG</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem fugit, numquam minus!</p>
+                    </div>
+                </div>
+            </div><!-- /.carousel-inner -->
+
+            <a href="#main-carousel" class="carousel-control-prev" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="sr-only" aria-hidden="true">Prev</span>
+            </a>
+            <a href="#main-carousel" class="carousel-control-next" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+                <span class="sr-only" aria-hidden="true">Next</span>
+            </a>
+        </div><!-- /.carousel -->
+    </div><!-- /.container -->
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <div id="main">
+
+            <!-- Introduction -->
+            <section id="intro" class="main">
+                <div class="spotlight">
+                    <div class="content">
+                    </div>
+                </div>
+            </section>
+
+            <!-- First Section -->
+            <section id="first" class="main special">
+                <header class="major">
+                    <h2>Search & Analysis</h2>
+                    <p></p>
+                </header>
+
+                <form class="field-container" action="http://localhost:5000" method="post">
+                    <input type="text" placeholder="Search..." class="field" name="term" autocomplete="off"/>
+
+                    <div class="icons-container">
+                        <input type="image" value="" class="search-btn" src="../static/images/loupe.png" style="width: 26px;vertical-align: middle">
+                    </div>
+                </form>
+            </section>
+
+            <!-- Second Section -->
+            <section id="second" class="main special">
+                <header class="major">
+                    <h2>KINT API</h2>
+                    <p>정치, 엔터, 육아, 쇼핑 등 다양한 분야 웹사이트의 데이터를 수집한 후,<br />
+                        KINT의 감지 모델을 통해 정제된 인터넷 신어의 데이터셋을 오픈 APi로 제공합니다.</p>
+                </header>
+                <ul class="statistics">
+                    <li class="style1">
+                        <span class="icon solid fa-code-branch"></span>
+                        <strong>공공성</strong> Etiam
+                    </li>
+                    <li class="style2">
+                        <span class="icon fa-folder-open"></span>
+                        <strong>사회적</strong> Magna
+                    </li>
+                    <li class="style3">
+                        <span class="icon solid fa-signal"></span>
+                        <strong>언어학</strong> Tempus
+                    </li>
+                    <li class="style4">
+                        <span class="icon solid fa-laptop"></span>
+                        <strong>통합성</strong> Aliquam
+                    </li>
+                    <li class="style5">
+                        <span class="icon fa-gem"></span>
+                        <strong>상업성</strong> Nullam
+                    </li>
+                </ul>
+                <p class="content">Nam elementum nisl et mi a commodo porttitor. Morbi sit amet nisl eu arcu faucibus hendrerit vel a risus. Nam a orci mi, elementum ac arcu sit amet, fermentum pellentesque et purus. Integer maximus varius lorem, sed convallis diam accumsan sed. Etiam porttitor placerat sapien, sed eleifend a enim pulvinar faucibus semper quis ut arcu. Ut non nisl a mollis est efficitur vestibulum. Integer eget purus nec nulla mattis et accumsan ut magna libero. Morbi auctor iaculis porttitor. Sed ut magna ac risus et hendrerit scelerisque. Praesent eleifend lacus in lectus aliquam porta. Cras eu ornare dui curabitur lacinia.</p>
+                <footer class="major">
+                    <ul class="actions special">
+                        <li><a href="#" class="button">KINT API 보러가기</a></li>
+                    </ul>
+                </footer>
+            </section>
+
+            <!-- Get Started -->
+            <section id="cta" class="main special">
+                <header class="major">
+                    <h2>Contact Us</h2>
+                    <p>KINT의 Open API와 Web 구현 정보는 Github에서 확인하실 수 있습니다.<br />
+                        추가적인 정보나 문의사항이 있으면 언제든 연락주세요!</p>
+                </header>
+                <footer class="major">
+                    <ul class="actions special">
+                        <li><a href="#" class="button primary">Go Github</a></li>
+                        <li><a href="#" class="button">emails</a></li>
+                    </ul>
+                </footer>
+            </section>
+
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <section>
+                <h2>Aliquam sed mauris</h2>
+                <p>Sed lorem ipsum dolor sit amet et nullam consequat feugiat consequat magna adipiscing tempus etiam dolore veroeros. eget dapibus mauris. Cras aliquet, nisl ut viverra sollicitudin, ligula erat egestas velit, vitae tincidunt odio.</p>
+                <ul class="actions">
+                    <li><a href="#" class="button">Learn More</a></li>
+                </ul>
+            </section>
+            <section>
+                <h2>Etiam feugiat</h2>
+                <dl class="alt">
+                    <dt>Address</dt>
+                    <dd>1234 Somewhere Road &bull; Nashville, TN 00000 &bull; USA</dd>
+                    <dt>Phone</dt>
+                    <dd>(000) 000-0000 x 0000</dd>
+                    <dt>Email</dt>
+                    <dd><a href="#">information@untitled.tld</a></dd>
+                </dl>
+                <ul class="icons">
+                    <li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
+                    <li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
+                    <li><a href="#" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
+                    <li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
+                    <li><a href="#" class="icon brands fa-dribbble alt"><span class="label">Dribbble</span></a></li>
+                </ul>
+            </section>
+            <p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/jquery.scrollex.min.js"></script>
+    <script src="../static/js/jquery.scrolly.min.js"></script>
+    <script src="../static/js/browser.min.js"></script>
+    <script src="../static/js/breakpoints.min.js"></script>
+    <script src="../static/js/util.js"></script>
+    <script src="../static/js/main.js"></script>
+</main>
+</body>
+</html>
