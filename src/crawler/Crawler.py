@@ -1467,7 +1467,7 @@ class NCrawler:
             seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=301 ORDER BY wdate DESC').fetchone()[0]
             seen_date = [int(_) for _ in seen_date.split('-')]
             seen_date = datetime.date(seen_date[0], seen_date[1], seen_date[2])
-            base = datetime.datetime.today()
+            base = datetime.date.today()
             date_list = [base - datetime.timedelta(days=x) for x in range(365)]
             count = 0
             varbreak = 0
@@ -1475,7 +1475,7 @@ class NCrawler:
             while date_list:
                 try:
                     count += 1
-                    seed = date_list.pop(0).date()
+                    seed = date_list
                     if seed not in seen:
                         seen.append(seed)
                         params['year'] = seed.year
@@ -1523,17 +1523,17 @@ class NCrawler:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'}
             seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=301').fetchall()]
-            base = seen[-1] if seen else datetime.datetime.today()
+            base = seen[-1] if seen else datetime.date.today()
             if seen:
                 base = [int(_) for _ in base.split('-')]
-                base = datetime.datetime(base[0], base[1], base[2])
+                base = datetime.date(base[0], base[1], base[2])
             date_list = [base - datetime.timedelta(days=x) for x in range(365)]
             count = 0
 
             while date_list:
                 try:
                     count += 1
-                    seed = date_list.pop(0).date()
+                    seed = date_list.pop(0)
                     if seed not in seen:
                         seen.append(seed)
                         params['year'] = seed.year
@@ -1563,3 +1563,779 @@ class NCrawler:
 
                 except Exception as e:
                     print(e)
+
+
+    def mk(self, recent=True):
+        if recent:
+            url = 'https://www.mk.co.kr/news/bestclick.php?BCC=%BA%CE%B5%BF%BB%EA'
+            params = {
+                'NY': '2020',
+                'NM': '8',
+                'ND': '13'
+            }
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=302 ORDER BY wdate DESC').fetchone()[0]
+            seen_date = [int(_) for _ in seen_date.split('-')]
+            seen_date = datetime.date(seen_date[0], seen_date[1], seen_date[2])
+            base = datetime.date.today()
+            date_list = [base - datetime.timedelta(days=x) for x in range(365)]
+            count = 0
+            varbreak = 0
+            seen = list()
+
+            while date_list:
+                BOC_list = ['%B4%BA%BD%BA%C1%BE%C7%D5', '%B0%E6%C1%A6', '%B1%E2%BE%F7', '%BB%E7%C8%B8', '%B1%B9%C1%A6',
+                            '%BA%CE%B5%BF%BB%EA', '%C1%F5%B1%C7', '%C1%A4%C4%A1', 'IT%B0%FA%C7%D0', '%B9%AE%C8%AD',
+                            '%BF%AC%BF%B9', '%BD%BA%C6%F7%C3%F7']
+                seed0 = date_list.pop(0)
+                while len(BOC_list) != 0:
+                    try:
+                        seed1 = BOC_list.pop(0)
+                        count += 1
+                        if [str(seed0) + '/' + seed1] not in seen:
+                            self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 302)',
+                                             [str(seed0) + '/' + seed1])
+                            self.conn.commit()
+                            seen.append([str(seed0) + '/' + seed1])
+                            params['NY'] = str(seed0.year)
+                            params['NM'] = str(seed0.month)
+                            params['ND'] = str(seed0.day)
+
+                        url = urljoin(url, '?BCC={}'.format(seed1))
+                        resp = download(url, params=params, method='GET')
+                        dom = BeautifulSoup(resp.content, 'lxml')
+
+                        head = [_.text.strip() for _ in dom.select('.list_area .tit > a')]
+                        for _ in range(0, len(head)):
+                            if seed0 > seen_date:
+                                self.cur.execute('INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,302)',
+                                                 [head[_], seed0, str(datetime.datetime.now()).split('.')[0],
+                                                  seed1])
+                                self.conn.commit()
+                            else:
+                                varbreak = 1
+                                break
+                        if varbreak == 1:
+                            break
+
+                        if count % 100 == 0:
+                            print(count)
+
+                    except Exception as e:
+                        print(e)
+                if varbreak == 1:
+                    break
+        else:
+            url = 'https://www.mk.co.kr/news/bestclick.php?BCC=%BA%CE%B5%BF%BB%EA'
+            params = {
+                'NY': '2020',
+                'NM': '8',
+                'ND': '13'
+            }
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=302 ORDER BY seen DESC').fetchall()]
+            base = seen[-1].split('/')[0] if seen else datetime.date.today()
+            if seen:
+                base = [int(_) for _ in base.split('-')]
+                base = datetime.date(base[0], base[1], base[2])
+            date_list = [base - datetime.timedelta(days=x) for x in range(365)]
+            count = 0
+
+            while date_list:
+                BOC_list = ['%B4%BA%BD%BA%C1%BE%C7%D5', '%B0%E6%C1%A6', '%B1%E2%BE%F7', '%BB%E7%C8%B8', '%B1%B9%C1%A6',
+                            '%BA%CE%B5%BF%BB%EA', '%C1%F5%B1%C7', '%C1%A4%C4%A1', 'IT%B0%FA%C7%D0', '%B9%AE%C8%AD',
+                            '%BF%AC%BF%B9', '%BD%BA%C6%F7%C3%F7']
+                seed0 = date_list.pop(0)
+                while len(BOC_list) != 0:
+                    try:
+                        seed1 = BOC_list.pop(0)
+                        count += 1
+                        if [str(seed0) + '/' + seed1] not in seen:
+                            self.cur.execute('INSERT INTO history(seen, ref) VALUES(?, 302)', [str(seed0) + '/' + seed1])
+                            self.conn.commit()
+                            seen.append([str(seed0) + '/' + seed1])
+                            params['NY'] = str(seed0.year)
+                            params['NM'] = str(seed0.month)
+                            params['ND'] = str(seed0.day)
+
+                        url = urljoin(url, '?BCC={}'.format(seed1))
+                        resp = download(url, params=params, method='GET')
+                        dom = BeautifulSoup(resp.content, 'lxml')
+
+                        head = [_.text.strip() for _ in dom.select('.list_area .tit > a')]
+                        for _ in range(0, len(head)):
+                            self.cur.execute('INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,302)',
+                                        [head[_], seed0, str(datetime.datetime.now()).split('.')[0],
+                                         seed1])
+                            self.conn.commit()
+
+                        if count % 100 == 0:
+                            print(count)
+
+                    except Exception as e:
+                        print(e)
+
+    def chosun(self, recent=True):
+        if recent:
+            seen = list()
+            seen_date = [_[0] for _ in
+                         self.cur.execute('SELECT seen FROM history WHERE ref=303 ORDER BY seen DESC').fetchall()]
+            seen_date = re.search(r'indate=(\d+)', seen_date[0]).group(1)
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36',
+                'cookie': '_ga=GA1.2.155331207.1590371425; _ss_pp_id=6d5c749e45df5fc2e3f1588636203804; __gads=ID=32309e63460e7bec:T=1590587589:S=ALNI_MbT83O-w-NBELV4M2sBrRwfoU4ZtQ; PCID=15946360484484587904430; OAX=gIYFPF8MNw4AAKeC; __utmz=222464713.1594814175.4.2.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); adfit_sdk_id=27c83848-9b3d-4f52-bd4d-abbd9d93a0ef; __utma=222464713.155331207.1590371425.1594814175.1595161152.5; _td=8dc8df98-07d4-4639-aa8b-f5bcd75c27b4; _cb_ls=1; _cb=BwJni3Czf8gSDbs39n; _gid=GA1.2.780937476.1597652887; _chartbeat2=.1597235265832.1597657270138.100001.P_loMBN6GXFO-uI2DZimj6lyt7i.1; _gat=1; _gat_chosun_total=1',
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'accept-encoding': 'gzip, deflate, br',
+                'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6'}
+
+            # 시간변수 만들기
+            start_date = datetime.datetime.strptime(seen_date, '%Y%m%d')
+            end_date = datetime.datetime.today()
+
+            str_date_list = []
+            while start_date.strftime('%Y%m%d') != end_date.strftime('%Y%m%d'):
+                str_date_list.append(start_date.strftime('%Y%m%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'https://news.chosun.com/svc/list_in/list_title.html?indate='
+            urls = list()
+            for i in str_date_list:
+                u = url + i + '&source=1&pn=1'
+                urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.content.decode('utf-8', 'replace'), 'html.parser')
+                    if seen not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                            INSERT INTO history(seen, ref) VALUES(?, 303)
+                        ''', [seed])
+                        self.conn.commit()
+
+                    for _ in [_['href'] for _ in dom.select('#list_body_id > div.paginate > ul > li > a')
+                              if _.has_attr('href') or _.has_attr('next')]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    if dom.select('#list_body_id > div.list_content > dl > dt') != None:
+                        head = [_.text.strip() for _ in dom.select('#list_body_id > div.list_content > dl > dt')]
+                        wdate = [_.text.strip() for _ in
+                                 dom.select('#list_body_id > div.list_content > dl > dd.date_author > span.date')]
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('pn=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(wdate):
+                            for _ in range(0, len(head)):
+                                self.cur.execute('''
+                                    INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,303)
+                                    ''', [head[_], wdate[_], cdate, page])
+                                self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+        else:
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=303 ORDER BY seen DESC').fetchall()]
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36',
+                'cookie': '_ga=GA1.2.155331207.1590371425; _ss_pp_id=6d5c749e45df5fc2e3f1588636203804; __gads=ID=32309e63460e7bec:T=1590587589:S=ALNI_MbT83O-w-NBELV4M2sBrRwfoU4ZtQ; PCID=15946360484484587904430; OAX=gIYFPF8MNw4AAKeC; __utmz=222464713.1594814175.4.2.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); adfit_sdk_id=27c83848-9b3d-4f52-bd4d-abbd9d93a0ef; __utma=222464713.155331207.1590371425.1594814175.1595161152.5; _td=8dc8df98-07d4-4639-aa8b-f5bcd75c27b4; _cb_ls=1; _cb=BwJni3Czf8gSDbs39n; _gid=GA1.2.780937476.1597652887; _chartbeat2=.1597235265832.1597657270138.100001.P_loMBN6GXFO-uI2DZimj6lyt7i.1; _gat=1; _gat_chosun_total=1',
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'accept-encoding': 'gzip, deflate, br',
+                'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6'}
+
+            # 시간변수 만들기
+            start_date = datetime.datetime.strptime('20190817', '%Y%m%d')
+            end_date = datetime.datetime.strptime(re.search(r'indate=(\d+)', seen[-1]).group(1),
+                                         '%Y%m%d') if seen else datetime.datetime.today()
+
+            str_date_list = []
+            while start_date.strftime('%Y%m%d') != end_date.strftime('%Y%m%d'):
+                str_date_list.append(start_date.strftime('%Y%m%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'https://news.chosun.com/svc/list_in/list_title.html?indate='
+            urls = list()
+            for i in str_date_list:
+                u = url + i + '&source=1&pn=1'
+                urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.content.decode('utf-8', 'replace'), 'html.parser')
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                            INSERT INTO history(seen, ref) VALUES(?, 303)
+                        ''', [seed])
+                        self.conn.commit()
+
+                    for _ in [_['href'] for _ in dom.select('#list_body_id > div.paginate > ul > li > a')
+                              if _.has_attr('href') or _.has_attr('next')]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    if dom.select('#list_body_id > div.list_content > dl > dt') != None:
+                        head = [_.text.strip() for _ in dom.select('#list_body_id > div.list_content > dl > dt')]
+                        wdate = [_.text.strip() for _ in
+                                 dom.select('#list_body_id > div.list_content > dl > dd.date_author > span.date')]
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('pn=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(wdate):
+                            for _ in range(0, len(head)):
+                                self.cur.execute('''
+                                    INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,303)
+                                    ''', [head[_], wdate[_], cdate, page])
+                                self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+    def digital_times(self, recent=True):
+        if recent:
+            seen = list()
+            seen_date = [_[0] for _ in
+                    self.cur.execute('SELECT seen FROM history WHERE ref=304 ORDER BY seen DESC').fetchall()]
+            seen_date = re.search(r'p_date=([\d+-]+)', seen_date[0]).group(1)
+            seen_date = ''.join(seen_date.split('-'))
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
+            }
+            params = {
+                '__VIEWSTATE': '/wEPDwULLTEyMTI4MTYxMjIPZBYCAgMPZBYCAgEPDxYCHgRUZXh0BQwyMDIwLiAwOC4gMThkZBgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAQUGc2VhcmNomyRP70CWd1D8LnYgMGWG5YGgBBk=',
+                '__VIEWSTATEGENERATOR': '8903B0C1',
+                '__EVENTVALIDATION': '/wEWAwK95sj+CgK4y9eRBwLH0pL8CYEABvtNhMvEhlw5kV7Y98D0eTOW',
+                'actionURL': 'http://www.dt.co.kr/eyescrap/eyescrapAction.html',
+                # 'p_date': '2020-08-13'
+            }
+
+            # 시간변수 만들기
+            start_date = datetime.datetime.strptime(seen_date, '%Y%m%d')
+            end_date = datetime.datetime.today()
+
+            str_date_list = []
+            while start_date.strftime('%Y-%m-%d') != end_date.strftime('%Y-%m-%d'):
+                str_date_list.append(start_date.strftime('%Y-%m-%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'http://papers.eyescrap.com/dt/list.aspx?actionURL=http%3a%2f%2fwww.dt.co.kr%2feyescrap%2feyescrapAction.html&p_date='  # 주소 합치는거 고치기
+            urls = list()
+            for i in str_date_list:
+                u = url + i
+                urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, params=params, headers=headers, method='GET')
+                    dom = BeautifulSoup(resp.text, 'html.parser')
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                                        INSERT INTO history(seen, ref) VALUES(?, 304)
+                                    ''', [seed])
+                        self.conn.commit()
+
+                    if dom.select(
+                            '#form1 > table > tr > td > table > tr > td > table > tr > td > table > tr > td > a') != None:
+                        head = [_.text.strip() for _ in dom.select(
+                            '#form1 > table > tr > td > table > tr > td > table > tr > td > table > tr > td > a')
+                                if _.text.strip() != '' and _.text.strip() != '[광고]' and _.select('b') == []]
+                        wdate = re.search('p_date=(\d+-\d+-\d+)', urlparse(seed).query).group(1)
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = '1'
+                        for _ in range(0, len(head)):
+                            self.cur.execute('''
+                                            INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,304)
+                                            ''', [head[_], wdate, cdate, page])
+                            self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+        else:
+            seen = [_[0] for _ in self.cur.execute('SELECT seen FROM history WHERE ref=304 ORDER BY seen DESC').fetchall()]
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
+            }
+            params = {
+                '__VIEWSTATE': '/wEPDwULLTEyMTI4MTYxMjIPZBYCAgMPZBYCAgEPDxYCHgRUZXh0BQwyMDIwLiAwOC4gMThkZBgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAQUGc2VhcmNomyRP70CWd1D8LnYgMGWG5YGgBBk=',
+                '__VIEWSTATEGENERATOR': '8903B0C1',
+                '__EVENTVALIDATION': '/wEWAwK95sj+CgK4y9eRBwLH0pL8CYEABvtNhMvEhlw5kV7Y98D0eTOW',
+                'actionURL': 'http://www.dt.co.kr/eyescrap/eyescrapAction.html',
+                # 'p_date': '2020-08-13'
+            }
+
+            # 시간변수 만들기
+            start_date = datetime.datetime.strptime('2019-08-17', '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(''.join(re.search(r'p_date=([\d+-]+)', seen[-1]).group(1).split('-')),
+                                                  '%Y%m%d') if seen else datetime.datetime.today()
+            str_date_list = []
+            while start_date.strftime('%Y-%m-%d') != end_date.strftime('%Y-%m-%d'):
+                str_date_list.append(start_date.strftime('%Y-%m-%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'http://papers.eyescrap.com/dt/list.aspx?actionURL=http%3a%2f%2fwww.dt.co.kr%2feyescrap%2feyescrapAction.html&p_date='  # 주소 합치는거 고치기
+            urls = list()
+            for i in str_date_list:
+                u = url + i
+                urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, params=params, headers=headers, method='GET')
+                    dom = BeautifulSoup(resp.text, 'html.parser')
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                            INSERT INTO history(seen, ref) VALUES(?, 304)
+                        ''', [seed])
+                        self.conn.commit()
+
+                    if dom.select(
+                            '#form1 > table > tr > td > table > tr > td > table > tr > td > table > tr > td > a') != None:
+                        head = [_.text.strip() for _ in dom.select(
+                            '#form1 > table > tr > td > table > tr > td > table > tr > td > table > tr > td > a')
+                                if _.text.strip() != '' and _.text.strip() != '[광고]' and _.select('b') == []]
+                        wdate = re.search('p_date=(\d+-\d+-\d+)', urlparse(seed).query).group(1)
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = '1'
+                        for _ in range(0, len(head)):
+                            self.cur.execute('''
+                                INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,304)
+                                ''', [head[_], wdate, cdate, page])
+                            self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+    def donga(self, recent=True):
+        if recent:
+            seen = list()
+            seen_date = [_[0] for _ in
+                    self.cur.execute('SELECT seen FROM history WHERE ref=305 ORDER BY seen DESC').fetchall()]
+            seen_date = re.search(r'ymd=([\d+-]+)', seen_date[0]).group(1)
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'}
+
+            # 시간변수 만들기
+            start_date = datetime.datetime.strptime(seen_date, '%Y%m%d')
+            end_date = datetime.datetime.today()
+
+            str_date_list = []
+            while start_date.strftime('%Y%m%d') != end_date.strftime('%Y%m%d'):
+                str_date_list.append(start_date.strftime('%Y%m%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'https://www.donga.com/news/List?p=1&prod=news&ymd='  # 주소 합치는거 고치기
+            urls = list()
+            for i in str_date_list:
+                u = url + i + '&m='
+                urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.content.decode('utf-8', 'replace'), 'html.parser')
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                                        INSERT INTO history(seen, ref) VALUES(?, 305)
+                                    ''', [seed])
+                        self.conn.commit()
+
+                    for _ in [_['href'] for _ in dom.select('#content > div.page > a')
+                              if _.has_attr('href') or _.has_attr('right on')]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    if dom.select('#list_body_id > div.list_content > dl > dt') != None:
+                        head = [_.text.strip() for _ in dom.select('#content > div > div.rightList > a > span.tit')]
+                        wdate = [_.text.strip() for _ in dom.select('#content > div > div > a > span.date')]
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('p=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(wdate):
+                            for _ in range(0, len(head)):
+                                self.cur.execute('''
+                                                INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,305)
+                                                ''', [head[_], wdate[_], cdate, page])
+                                self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+        else:
+            seen = [_[0] for _ in
+                    self.cur.execute('SELECT seen FROM history WHERE ref=305 ORDER BY seen DESC').fetchall()]
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'}
+
+            # 시간변수 만들기
+            start_date = datetime.datetime.strptime('20190817', '%Y%m%d')
+            end_date = datetime.datetime.strptime(re.search(r'ymd=([\d+-]+)', seen[-1]).group(1),
+                                                  '%Y%m%d') if seen else datetime.datetime.today()
+
+            str_date_list = []
+            while start_date.strftime('%Y%m%d') != end_date.strftime('%Y%m%d'):
+                str_date_list.append(start_date.strftime('%Y%m%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'https://www.donga.com/news/List?p=1&prod=news&ymd='  # 주소 합치는거 고치기
+            urls = list()
+            for i in str_date_list:
+                u = url + i + '&m='
+                urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.content.decode('utf-8', 'replace'), 'html.parser')
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                            INSERT INTO history(seen, ref) VALUES(?, 305)
+                        ''', [seed])
+                        self.conn.commit()
+
+                    for _ in [_['href'] for _ in dom.select('#content > div.page > a')
+                              if _.has_attr('href') or _.has_attr('right on')]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    if dom.select('#list_body_id > div.list_content > dl > dt') != None:
+                        head = [_.text.strip() for _ in dom.select('#content > div > div.rightList > a > span.tit')]
+                        wdate = [_.text.strip() for _ in dom.select('#content > div > div > a > span.date')]
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('p=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(wdate):
+                            for _ in range(0, len(head)):
+                                self.cur.execute('''
+                                    INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,305)
+                                    ''', [head[_], wdate[_], cdate, page])
+                                self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+    def SBS(self, recent=True):
+        if recent:
+            seen = list()
+            seen_date = [_[0] for _ in
+                    self.cur.execute('SELECT seen FROM history WHERE ref=306 ORDER BY seen DESC').fetchall()]
+            seen_date = re.search(r'pageDate=([\d+-]+)', seen_date[0]).group(1)
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'}
+
+            # 시간변수 만들기, 시작날짜 종료날짜 정하기
+            start_date = datetime.datetime.strptime(seen_date, '%Y%m%d')
+            end_date = datetime.datetime.today()
+
+            str_date_list = []
+            while start_date.strftime('%Y%m%d') != end_date.strftime('%Y%m%d'):
+                str_date_list.append(start_date.strftime('%Y%m%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'https://news.sbs.co.kr/news/newsflash.do?pageDate='  # 주소 합치는거 고치기
+            urls = list()
+            for i in str_date_list:
+                for k in range(40):
+                    u = url + i + '&pageIdx=' + str(k + 1)
+                    urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.content.decode('utf-8', 'replace'), 'html.parser')
+                    if seed not in seen:
+                        seen.append(seed)
+                        if len(dom.select(
+                                '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > span.date')) != 0:
+                            self.cur.execute('''
+                                            INSERT INTO history(seen, ref) VALUES(?, 306)
+                                        ''', [seed])
+                            self.conn.commit()
+
+                    if len(dom.select(
+                            '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > span.date')) != 0:
+                        head = [_.text.strip() for _ in dom.select(
+                            '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > strong')]
+                        wdate = [_.text.strip() for _ in dom.select(
+                            '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > span.date')]
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('pageIdx=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(wdate):
+                            for _ in range(0, len(head)):
+                                self.cur.execute('''
+                                                INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,306)
+                                                ''', [head[_], wdate[_], cdate, page])
+                                self.conn.commit()
+                    else:
+                        date = re.search('pageDate=(\d+)', urlparse(seed).query).group(1)
+                        while date == re.search('pageDate=(\d+)', urlparse(urls[0]).query).group(1):
+                            urls.pop(0)
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+        else:
+            seen = [_[0] for _ in
+                    self.cur.execute('SELECT seen FROM history WHERE ref=306 ORDER BY seen DESC').fetchall()]
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'}
+
+            # 시간변수 만들기, 시작날짜 종료날짜 정하기
+            start_date = datetime.datetime.strptime('20190817', '%Y%m%d')
+            end_date = datetime.datetime.strptime(re.search(r'pageDate=([\d+-]+)', seen[-1]).group(1),
+                                                  '%Y%m%d') if seen else datetime.datetime.today()
+
+            str_date_list = []
+            while start_date.strftime('%Y%m%d') != end_date.strftime('%Y%m%d'):
+                str_date_list.append(start_date.strftime('%Y%m%d'))
+                start_date += datetime.timedelta(days=1)
+
+            url = 'https://news.sbs.co.kr/news/newsflash.do?pageDate='  # 주소 합치는거 고치기
+            urls = list()
+            for i in str_date_list:
+                for k in range(40):
+                    u = url + i + '&pageIdx=' + str(k + 1)
+                    urls.append(u)
+
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(-1)
+
+                    resp = download(seed, headers=headers)
+                    dom = BeautifulSoup(resp.content.decode('utf-8', 'replace'), 'html.parser')
+                    if seed not in seen:
+                        seen.append(seed)
+                        if len(dom.select(
+                                '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > span.date')) != 0:
+                            self.cur.execute('''
+                                INSERT INTO history(seen, ref) VALUES(?, 306)
+                            ''', [seed])
+                            self.conn.commit()
+
+                    if len(dom.select(
+                            '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > span.date')) != 0:
+                        head = [_.text.strip() for _ in dom.select(
+                            '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > strong')]
+                        wdate = [_.text.strip() for _ in dom.select(
+                            '#container > div > div.w_news_list.type_issue > ul > li > a.news > p > span.date')]
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('pageIdx=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(wdate):
+                            for _ in range(0, len(head)):
+                                self.cur.execute('''
+                                    INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,306)
+                                    ''', [head[_], wdate[_], cdate, page])
+                                self.conn.commit()
+                    else:
+                        date = re.search('pageDate=(\d+)', urlparse(seed).query).group(1)
+                        while date == re.search('pageDate=(\d+)', urlparse(urls[0]).query).group(1):
+                            urls.pop(0)
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+    def hankyung(self, recent=True):
+        if recent:
+            seen = list()
+            seen_date = self.cur.execute('SELECT wdate FROM head WHERE ref=307 ORDER BY wdate DESC').fetchone()[0]
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36',
+                'Cookie': 'dable_uid=56241276.1588668566321; __gads=ID=32ec6ccd891b6cb1:T=1588668565:S=ALNI_Mb-cg_Eg1b8md7cdvKumpaG3T20ww; gtmdlkr=; _gid=GA1.2.295727024.1597748733; onlytitle=check; _gat_UA-109163096-1=1; _gat_UA-109163096-3=1; _gat_UA-136144676-1=1; _ga_PBVPGVW46M=GS1.1.1597748731.3.1.1597749317.0; _ga=GA1.2.402869033.1588668573'
+            }
+            params = {
+                'page': '1'
+            }
+
+            url = 'https://www.hankyung.com/all-news/?page=1'
+
+            urls = list()
+            urls.append(url)
+            count = 0
+            varbreak=0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+
+                    params['page'] = re.search('page=(\d+)', urlparse(seed).query).group(1)
+                    resp = download(seed, params=params, headers=headers, method='GET')
+                    dom = BeautifulSoup(resp.text, 'html.parser')
+
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                                        INSERT INTO history(seen, ref) VALUES(?, 307)
+                                    ''', [seed])
+                        self.conn.commit()
+
+                    for _ in [_['href'] for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.paging > a')[
+                                                 2:-1]]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    if dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div > h3 > a') != None:
+                        head = [_.text.strip() for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div > h3 > a')]
+                        date = [re.search('(\d{8})', _['href']).group(1) for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div > h3 > a')]
+                        time = [_.text.strip() for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div.txt > p.time')]
+                        t = list()
+                        for i in range(len(date)):
+                            t.append(date[i] + ' ' + time[i])
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('page=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(t):
+                            for _ in range(0, len(head)):
+                                if t[_]> seen_date:
+                                    self.cur.execute('''
+                                                    INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,307)
+                                                    ''', [head[_], t[_], cdate, page])
+                                    self.conn.commit()
+                                else:
+                                    varbreak=1
+                                    break
+                            if varbreak == 1:
+                                break
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
+
+        else:
+            seen = [_[0] for _ in
+                    self.cur.execute('SELECT seen FROM history WHERE ref=307 ORDER BY seen DESC').fetchall()]
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36',
+                'Cookie': 'dable_uid=56241276.1588668566321; __gads=ID=32ec6ccd891b6cb1:T=1588668565:S=ALNI_Mb-cg_Eg1b8md7cdvKumpaG3T20ww; gtmdlkr=; _gid=GA1.2.295727024.1597748733; onlytitle=check; _gat_UA-109163096-1=1; _gat_UA-109163096-3=1; _gat_UA-136144676-1=1; _ga_PBVPGVW46M=GS1.1.1597748731.3.1.1597749317.0; _ga=GA1.2.402869033.1588668573'
+                }
+            params = {
+                'page': '1'
+            }
+
+            url = seen[0] if seen else 'https://www.hankyung.com/all-news/?page=1'
+
+            urls = list()
+            urls.append(url)
+            count = 0
+
+            while urls:
+                try:
+                    count += 1
+                    seed = urls.pop(0)
+
+                    params['page'] = re.search('page=(\d+)', urlparse(seed).query).group(1)
+                    resp = download(seed, params=params, headers=headers, method='GET')
+                    dom = BeautifulSoup(resp.text, 'html.parser')
+
+                    if seed not in seen:
+                        seen.append(seed)
+                        self.cur.execute('''
+                            INSERT INTO history(seen, ref) VALUES(?, 307)
+                        ''', [seed])
+                        self.conn.commit()
+
+                    for _ in [_['href'] for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.paging > a')[
+                                                 2:-1]]:
+                        newUrls = urljoin(seed, _)
+                        if newUrls not in urls and newUrls not in seen:
+                            urls.append(newUrls)
+
+                    if dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div > h3 > a') != None:
+                        head = [_.text.strip() for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div > h3 > a')]
+                        date = [re.search('(\d{8})', _['href']).group(1) for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div > h3 > a')]
+                        time = [_.text.strip() for _ in dom.select(
+                            '#container > div.contents_wrap > div.contents > div.article_content > div.daily_article > div > ul > li > div.txt > p.time')]
+                        t = list()
+                        for i in range(len(date)):
+                            t.append(date[i] + ' ' + time[i])
+                        cdate = str(datetime.datetime.now()).split('.')[0]
+                        page = re.search('page=(\d+)', urlparse(seed).query).group(1)
+                        if len(head) == len(t):
+                            for _ in range(0, len(head)):
+                                self.cur.execute('''
+                                    INSERT INTO head(head, wdate, cdate, page, ref) VALUES(?,?,?,?,307)
+                                    ''', [head[_], t[_], cdate, page])
+                                self.conn.commit()
+
+                    if count % 100 == 0:
+                        print(count)
+
+                except Exception as e:
+                    print('Error', e)
