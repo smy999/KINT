@@ -63,7 +63,6 @@ class Ext:
 
     def extract_r_rat(self, sent, statistic):
         conn = sqlite3.connect('kr_db.db')
-        cur = conn.cursor()
         post_pos = pd.read_sql('SELECT word FROM kr_db WHERE ID="조사_기초" OR ID="조사_상세"', conn)
         post_pos['word'] = post_pos['word'].map(lambda x: pattern3.sub(' ',
                                                                        pattern2.sub('',
@@ -74,9 +73,11 @@ class Ext:
         for k in statistic.keys():
             try:
                 self.noun_extractor.train_extract([sent[k]])
-                count = pprat = wsrat = 0
+                count = pprat = wsrat = pnrat = 0
                 for _ in self.noun_extractor.lrgraph.get_r(k, topk=-1):
-                    if _[0] in post_pos:
+                    if _[0] == '들':
+                        pnrat += _[1]
+                    elif _[0] in post_pos:
                         if _[0] != '':
                             pprat += _[1]
                         elif _[0] == '':
@@ -84,7 +85,7 @@ class Ext:
                 for _ in self.noun_extractor.lrgraph.get_r(k, topk=-1):
                     count += _[1]
 
-                r_rat[k] = {'rpprat': pprat / count, 'rwsrat': wsrat / count}
+                r_rat[k] = {'rpprat': pprat / count, 'rwsrat': wsrat / count, 'rpnrat': pnrat / count}
             except Exception as e:
                 print(e)
         return r_rat
@@ -94,9 +95,10 @@ class Ext:
         r_rat = pd.DataFrame().from_dict(r_rat).T
         statistic["rpprat"] = r_rat["rpprat"]
         statistic["rwsrat"] = r_rat["rwsrat"]
+        statistic['rpnrat'] = r_rat["rpnrat"]
         statistic.rename(columns={0: 'cohesion_forward', 1: 'cohesion_backward', 2: 'left_branching_entropy',
                                   3: 'right_branching_entropy', 4: 'left_accessor_variety', 5: 'right_accessor_variety',
                                   6: 'leftside_frequency', 7: 'rightside_frequency',
-                                  'rpprat': 'right_post_postion_ratio', 'rwsrat': 'right_whitespace_ratio'},
+                                  'rpprat': 'right_post_postion_ratio', 'rwsrat': 'right_whitespace_ratio', 'rpnrat':'rigt_pluralnouns_ratio'},
                          inplace=True)
         return statistic
