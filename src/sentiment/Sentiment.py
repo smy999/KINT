@@ -137,18 +137,18 @@ class Sentiment:
         for _ in range(len(ntemp)):
             nsent[ntemp['index'][_]] = ntemp['0'][_]
 
-        # 긍정 단어에 대해서 most_related한 단어 20개 추출하여, 그들의 감성 score 업데이트
+        # 긍정 단어에 대해서 most_related한 단어 30개 추출하여, 그들의 감성 score 업데이트
         temp_score_dict = defaultdict(lambda: 0)
         words = {_: 1.0 for _ in psent.keys()}
         for k, v in psent.items():
-            most_relateds = self.extract_most_related(k,v,words, 20)
+            most_relateds = self.extract_most_related(k,v,words, 30)
             for _ in most_relateds:
                 temp_score_dict[_[0]] += _[1] * 0.1
 
-        # 부정 단어에 대해서 most_related한 단어 20개 추출하여, 그들의 감성 score 업데이트
+        # 부정 단어에 대해서 most_related한 단어 30개 추출하여, 그들의 감성 score 업데이트
         words = {_: 1.0 for _ in nsent.keys()}
         for k, v in nsent.items():
-            most_relateds = self.extract_most_related(k,v,words, 20)
+            most_relateds = self.extract_most_related(k,v,words, 30)
             for _ in most_relateds:
                 temp_score_dict[_[0]] -= _[1] * 0.1
 
