@@ -52,9 +52,8 @@ class Sentiment:
             mapping_most_related[k] = self.extract_most_related(k,v,words)
             pn_score = 0
             for _ in mapping_most_related[k]:
-                if _[0] in ' '.join(sentiment.iloc[:, 1]):
-                    if sentiment[sentiment[0] == _[0]]['P/N'].iloc[0] != 0:
-                        pn_score += _[1] * sentiment[sentiment[0] == _[0]]['P/N'].iloc[0]
+                if sum(sentiment[0] == _[0]) != 0:
+                    pn_score += _[1] * sentiment[sentiment[0] == _[0]]['P/N'].iloc[0]
             score_dict[k] = pn_score
 
         # sentiment 점수를 엑셀 파일로 저장한다.
@@ -156,7 +155,7 @@ class Sentiment:
         for k, v in mapping_most_related.items():
             pn_score = 0
             for _ in v:
-                if _[0] in ' '.join(sentiment.iloc[:, 1]):
+                if sum(sentiment[0] == _[0]) != 0:
                     pn_score += _[1] * sentiment[sentiment[0] == _[0]]['P/N'].iloc[0]
             score_dict[k] = pn_score
         temp = pd.DataFrame(sorted(score_dict.items(), key=lambda _: _[1], reverse=True))
