@@ -5,11 +5,31 @@ from soynlp.word import pmi as pmi_func
 from soynlp.tokenizer import LTokenizer
 import pandas as pd
 import sqlite3
+import numpy as np
+import re
+from string import punctuation
 
+# Stopwords 처리
+pattern1 = re.compile(r'[{}]'.format(re.escape(punctuation)))  # punctuation 제거
+pattern2 = re.compile(r'[^가-힣 ]')  # 특수문자, 자음, 모음, 숫자, 영어 제거
+pattern3 = re.compile(r'\s{2,}')  # white space 1개로 바꾸기.
 
 class Sentiment:
     def __init__(self):
         self.word_extractor = WordExtractor()
+
+    def extract_sent(self, df, words):
+        # 불용어 처리
+        df['head'] = df['head'].map(lambda x: pattern3.sub(' ',
+                                                           pattern2.sub('',
+                                                                        pattern1.sub('', x))))
+        # sentence 추출
+        sent = defaultdict(lambda: 0)
+        for w in words:
+            temp = [s for s in df['head'] if w in s]
+            sent[w] = '  '.join(temp)
+
+        return sent
 
     # 입력 k, v에 대해서 (k는 word, v는 sentence이다.) 가장 유사한 10개의 단어에 대해서 (단어, pmi) 쌍을 출력해준다.
     def extract_most_related(self, k, v, words, num=10):
