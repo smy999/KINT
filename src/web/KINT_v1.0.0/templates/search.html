@@ -1,0 +1,280 @@
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>KINT</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <noscript><link rel="stylesheet" href="../static/css/noscript.css" /></noscript>
+
+    <!--chart.js Line graph CDN-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+</head>
+<body class="is-preload">
+
+
+<!-- Nav -->
+<nav id="nav">
+    <ul>
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="/search">Search</a></li>
+        <li><a href="/">Open API</a></li>
+        <li><a href="/">Contact</a></li>
+    </ul>
+
+</nav>
+<main  id="search_main">
+    <!--Wrapper-->
+    <div id="wrapper" style="max-width: calc(100% - 4em); width: 100%">
+
+        <!-- Header -->
+        <header id="header">
+            <h1>Search & Analysis</h1>
+            <p></p>
+        </header>
+
+        <!-- Search Bar Section-->
+        <section id="search_sec">
+            <div class="search-bar" style="text-align: center; margin-bottom: 50px;">
+                <!--app.py와 데이터를 주고받기 위한 form-->
+                <form class="field-container" action="/search" method="post">
+                    <!--Input Box-->
+                    <input type="text" placeholder="Search..." class="field" name="term" autocomplete="off"/>
+                    <!--Search Icon-->
+                    <div class="icons-container">
+                        <input type="image" value="" onclick="" class="search-btn" src="../static/images/loupe.png" style="width: 26px;vertical-align: middle">
+                    </div>
+                </form>
+            </div>
+        </section>
+
+
+        <section id="result_sec">
+            <!-- Results: 상단  -->
+            <div id="main" style="width: 100%; position: relative;">
+
+                <!--Example Sentence-->
+                <div class="left_result" id="example_result" style="float: left; width: 65%">
+                    <div style="width: 90%">
+                        <span class="chart__title">Example Sentence</span>
+                        <!--Positive & Negative index-->
+                        <div style="float: left;position: relative;">
+                            <p>{{ sentence }}</p>
+                            <p>{{ jsdata }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Sentimental Analysis graph-->
+                <div class="right_result" id="sentimental_result" style="float: left; width: 35%;">
+                    <div class="charts">
+                        <div class="chart chart--dev">
+                            <span class="chart__title">Sentimant Analysis</span>
+                            <!--Positive & Negative index-->
+                            <div style="float: left;position: relative;">
+                                <ul style=" list-style: none; padding-left: 0px;">
+                                    <li style="padding-left: 0px;height: 30px; margin-bottom: 10px">
+                                        <span>Positive</span>
+                                    </li>
+                                    <li style="padding-left: 0px;height: 30px; margin-bottom: 10px">
+                                        <span>Negative</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!--Positive & Negative graph-->
+                            <ul class="chart--horiz">
+                                <li class="chart__bar" style="width: {{ sent1 }}; list-style: none">
+                                    <span class="chart__label">{{ sent1 }}</span>
+                                </li>
+                                <li class="chart__bar" style="width: {{ sent2 }}; list-style: none">
+                                    <span class="chart__label">{{ sent2 }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Results: 하단 -->
+            <div id="main" style="width: 100%; position: relative;">
+
+                <!--Frequency & Rate Analysis-->
+                <div class="left_result" id="freq_rate_result" style="float: left; width: 65%">
+                    <span class="chart__title">Frequency & Rate Analysis</span>
+                    <!--Positive & Negative index-->
+                    <div style="width:90%; position: relative">
+                        <canvas id="canvas"></canvas>
+                    </div>
+
+                    <script>
+                        var jsdata = {{ jsdata|safe }};
+                        new Chart(document.getElementById("canvas"), {
+                            type: 'line',
+                            data: {
+                                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+                                datasets: [{
+                                    label: jsdata[0]["label"],
+                                    data: jsdata[0]["data"],
+                                    borderColor: "rgb(255,211,164)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                },{
+                                    label: jsdata[1]["label"],
+                                    data: jsdata[1]["data"],
+                                    borderColor: "rgb(255,164,164)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                },{
+                                    label: jsdata[2]["label"],
+                                    data: jsdata[2]["data"],
+                                    borderColor: "rgb(189,191,252)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                },{
+                                    label: jsdata[3]["label"],
+                                    data: jsdata[3]["data"],
+                                    borderColor: "rgb(179,212,167)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                title: {
+                                    display: true,
+                                    text: '분야별 {{ term }} 사용 비율'
+                                },
+                                tooltips: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                hover: {
+                                    mode: 'nearest',
+                                    intersect: true
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'x축'
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        display: true,
+                                        ticks: {
+                                            suggestedMin: 0,
+                                        },
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'y축'
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+
+                    </script>
+
+
+                </div>
+
+                <!--Amudomolla graph-->
+                <div class="right_result" id="Amudomolla_result" style="float: left; width: 35%">
+                    <span class="chart__title">Amudomolla Analysis</span>
+                    <!--Positive & Negative index-->
+                    <div style="float: left;position: relative;">
+
+
+                        <div class="chart-container" style="position: relative; width: 95%;">
+                            <canvas id="myChart"></canvas>
+                        </div>
+
+                        <script>
+                            var ctx = document.getElementById('myChart');
+
+                            var config = {
+                                type: 'line',
+                                data: {
+                                    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+                                    datasets: [{
+                                    label: jsdata[0]["label"],
+                                    data: jsdata[0]["data"],
+                                    borderColor: "rgb(255,211,164)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                },{
+                                    label: jsdata[1]["label"],
+                                    data: jsdata[1]["data"],
+                                    borderColor: "rgb(255,164,164)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                },{
+                                    label: jsdata[2]["label"],
+                                    data: jsdata[2]["data"],
+                                    borderColor: "rgb(189,191,252)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                },{
+                                    label: jsdata[3]["label"],
+                                    data: jsdata[3]["data"],
+                                    borderColor: "rgb(179,212,167)",
+                                    backgroundColor: "rgba(255, 201, 14, 0)",
+                                    fill: true,
+                                    lineTension: 0
+                                }]
+                                },
+                                options: {
+                                    maintainAspectRatio: false,
+                                    title: {
+                                        text: 'Chart.js Time Scale'
+                                    },
+                                    scales: {
+                                        yAxes: [{
+                                            scaleLabel: {
+                                                display: true,
+                                                labelString: '차트'
+                                            }
+                                        }]
+                                    },
+                                }
+                            };
+
+                            //차트 그리기
+                            var myChart = new Chart(ctx, config);
+                        </script>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/js/jquery.scrollex.min.js"></script>
+<script src="../static/js/jquery.scrolly.min.js"></script>
+<script src="../static/js/browser.min.js"></script>
+<script src="../static/js/breakpoints.min.js"></script>
+<script src="../static/js/util.js"></script>
+<script src="../static/js/main.js"></script>
+
+</body>
+</html>
