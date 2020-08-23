@@ -8,7 +8,7 @@ import math
 from string import punctuation
 from soynlp.word import WordExtractor
 
-# Stopwords 처리
+# Stopwords 정의
 pattern1 = re.compile(r'[{}]'.format(re.escape(punctuation)))  # punctuation 제거
 pattern2 = re.compile(r'[^가-힣 ]')  # 특수문자, 자음, 모음, 숫자, 영어 제거
 pattern3 = re.compile(r'\s{2,}')  # white space 1개로 바꾸기.
@@ -18,21 +18,23 @@ class Ext:
     def __init__(self, df):
         self.df = df
         self.noun_extractor = LRNounExtractor_v2(verbose=True)
-        self.word_extractor = WordExtractor(min_frequency=math.floor(len(self.df) * 0.0001))
+        self.word_extractor = WordExtractor(min_frequency=math.floor(len(self.df) * 0.00001))
 
+    # 위에서 정의한 Stopwords를 이용하여 Data Stopwords 처리
     def cleaning(self):
         self.df['head'] = self.df['head'].map(lambda x: pattern3.sub(' ',
                                                                      pattern2.sub('',
                                                                                   pattern1.sub('', x))))
         return self.df
 
+    # soynlp에서 제공하는 명사 추출을 통해 1차적으로 신어후보 추출
     def extract_nouns(self):
-        nouns = self.noun_extractor.train_extract(self.df['head'], min_noun_frequency=math.floor(len(self.df) * 0.0001))
+        nouns = self.noun_extractor.train_extract(self.df['head'], min_noun_frequency=math.floor(len(self.df) * 0.00001))
         words = {k: v for k, v in nouns.items() if len(k) > 1}
         return words
 
+    # 추출된 신어를 사전에 검색하여 사전에 없는 결과를 2차 신어 후보로 추출
     def search_dict(self, nouns):
-        # 사전 검색 결과 없는 단어 추출
         conn = sqlite3.connect('kr_db.db')
         cur = conn.cursor()
         data = pd.read_sql('SELECT word FROM kr_db', conn)
@@ -43,14 +45,15 @@ class Ext:
         data = ' '.join(data['word'])
         return pd.DataFrame([_ for _ in nouns if _[0] not in data])
 
-    # 의미 추출을 위한 training data set 생성
+    # 신어후보 단어가 들어가 있는 문장 추출
     def extract_sent(self, words):
         sent = defaultdict(lambda: 0)
         for w in words[0]:
-            temp = [s for s in self.df['head'] if w in s and np.random.uniform() > 0.5]
+            temp = [s for s in self.df['head'] if w in s]
             sent[w] = '  '.join(temp)
         return sent
 
+    # 각 문장을 기반으로 soynlp에서 제공하는 8가지 변수 추출
     def extract_statistic_value(self, sent):
         statistic = defaultdict(lambda: 0)
         for k, v in sent.items():
@@ -61,9 +64,11 @@ class Ext:
                 print(e)
         return statistic
 
+    # 각 문장을 기반으로 3가지 변수 추가 추출 (신어후보의 오른쪽에 ~들이 붙은 비율 / 신어후보의 오른쪽에 그 외의 조사가 붙은 비율 / 신어후보의 오른쪽에 white space가 붙은 비율)
     def extract_r_rat(self, sent, statistic):
         conn = sqlite3.connect('kr_db.db')
         post_pos = pd.read_sql('SELECT word FROM kr_db WHERE ID="조사_기초" OR ID="조사_상세"', conn)
+        # 검색이 가능한 형태로 만들어주기 위해서 동일한 불용어 처리 (사전의 ~는 과 같이 되어 있는 경우 ~를 제거하기 위함)
         post_pos['word'] = post_pos['word'].map(lambda x: pattern3.sub(' ',
                                                                        pattern2.sub('',
                                                                                     pattern1.sub('', x))))
@@ -90,6 +95,7 @@ class Ext:
                 print(e)
         return r_rat
 
+    # 추출한 변수를 하나의 DataFrame으로 합침.
     def combine_var(self, statistic, r_rat):
         statistic = pd.DataFrame().from_dict(statistic).T
         r_rat = pd.DataFrame().from_dict(r_rat).T
