@@ -3,10 +3,12 @@ import tensorflow_datasets as tfds
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding, Dense, LSTM, SimpleRNN, Bidirectional, GRU, Dropout
+from tensorflow.keras.layers import Embedding, Dense, LSTM, SimpleRNN, Bidirectional, GRU, Dropout, Masking
 import matplotlib.pyplot as plt
 from soynlp.tokenizer import LTokenizer
 from soynlp.word import WordExtractor
+import gensim
+import numpy as np
 
 # 불용어 처리하지 않고 sentence 추출
 def extract_sent(df, words):
@@ -75,53 +77,55 @@ class generator_subtokenizer:
 
 class generator_ltokenizer:
     # Training tokenizer
-    def __init__(self,sent, words):
-        self.words = words
+    def __init__(self, words, sent):
         self.word_extractor = WordExtractor()
-        self.word_extractor.train(sent.split('  '))  # 바꿀 것
+        self.words = words
+        self.word_extractor.train(sent)  # 바꿀 것
         cohesions = self.word_extractor.all_cohesion_scores()
         l_cohesions = {word: score[0] for word, score in cohesions.items()}
         l_cohesions.update(self.words)
         self.tokenizer = LTokenizer(l_cohesions)
 
-    def create_vocab(self, sent):
-        vocab_temp = list(set(self.tokenizer(sent)))
-        self.vocab = {vocab_temp[_]: _ + 1 for _ in range(len(vocab_temp))}
-        self.idx2vocab = {v: k for k, v in self.vocab.items()}
+    def train_word_model(self, sentences):
+        self.word_model = gensim.models.Word2Vec(sentences, size=100, min_count=1,
+                                    window=2, iter=100)
+        pretrained_weights = self.word_model.wv.syn0
+        self.vocab_size, self.embedding_size = pretrained_weights.shape
 
-    def create_var(self, sent):
-        sent_list = [self.tokenizer(_) for _ in sent]
-        for i in range(len(sent_list)):
-            for j in range(len(sent_list[i])):
-                sent_list[i][j] = self.vocab[sent_list[i][j]]
+    def word2idx(self, word):
+        return self.word_model.wv.vocab[word].index
+
+    def idx2word(self, idx):
+        return self.word_model.wv.index2word[idx]
+
+    def create_var(self, sentences):
+        for i in range(len(sentences)):
+            for j in range(len(sentences[i])):
+                sentences[i][j] = self.word2idx(sentences[i][j])
 
         sequences = list()
-        for line in sent_list:
+        for line in sentences:
             for _ in range(1, len(line)):
                 sequence = line[:_ + 1]
                 sequences.append(sequence)
-        self.max_len = max(len(_) for _ in sequences)
-        sequences = pad_sequences(sequences, maxlen=self.max_len, padding='pre')
+        self.max_sentence_len = max([len(_) for _ in sentences])
+        sequences = pad_sequences(sequences, maxlen=self.max_sentence_len, padding='pre')
         X = sequences[:, :-1]
         y = sequences[:, -1]
-        y = to_categorical(y, num_classes=len(self.vocab) + 1)
         return X, y
 
     def model(self):
         self.model = Sequential()
-        self.model.add(Embedding(self.tokenizer.vocab_size, 10, input_length=self.max_len - 1,
-                                 mask_zero=True))  # y데이터를 분리하였으므로 이제 X데이터의 길이는 기존 데이터의 길이 - 1
-        self.model.add(GRU(64, return_sequences=True))
-        self.model.add(Dropout(0.4))
-        self.model.add(GRU(64, return_sequences=False))
-        self.model.add(Dropout(0.4))
-        self.model.add(Dense(self.tokenizer.vocab_size, activation='softmax'))
-        self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        self.model.add(Embedding(self.vocab_size, self.embedding_size, input_length=self.max_sentence_len - 1))  # y데이터를 분리하였으므로 이제 X데이터의 길이는 기존 데이터의 길이 - 1
+        self.model.add(Bidirectional(GRU(64, return_sequences=False)))
+        self.model.add(Dropout(0.3))
+        self.model.add(Dense(self.vocab_size, activation='softmax'))
+        self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    def sentence_generation(self, current_word, n):
+    def sentence_generation(self, word, n):
+        word_idxs = [self.word2idx(word)]
         for _ in range(n):  # n번 반복
-            encoded = [self.vocab[_] for _ in current_word.split(' ')]
-            encoded = pad_sequences([encoded], maxlen=self.max_len - 1, padding='pre')  # 데이터에 대한 패딩
-            result = self.model.predict_classes(encoded, verbose=0)
-            current_word = current_word + ' ' + self.idx2vocab[result[0]]  # 현재 단어 + ' ' + 예측 단어를 현재 단어로 변경
-        return current_word
+            encoded = pad_sequences([word_idxs], maxlen=self.max_sentence_len - 1, padding='pre')  # 데이터에 대한 패딩
+            result = self.model.predict(encoded)
+            word_idxs.append(np.argmax(result))
+        return ' '.join(self.idx2word(idx) for idx in word_idxs)
