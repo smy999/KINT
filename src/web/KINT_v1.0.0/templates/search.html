@@ -31,7 +31,7 @@
 
 
 <!-- Nav -->
-<nav id="nav">
+<nav id="search_nav">
     <ul>
         <li><a href="/" class="active">Home</a></li>
         <li><a href="/search">Search</a></li>
@@ -53,15 +53,38 @@
         <section id="search_sec">
             <div class="search-bar" style="text-align: center; margin-bottom: 50px;">
                 <!--app.py와 데이터를 주고받기 위한 form-->
-                <form class="field-container" action="/search" method="post">
-                    <!--Input Box-->
-                    <input type="text" placeholder="Search..." class="field" name="term" autocomplete="off"/>
-                    <!--Search Icon-->
-                    <div class="icons-container">
-                        <input type="image" value="" onclick="" class="search-btn" src="../static/images/loupe.png" style="width: 26px;vertical-align: middle">
+                <form action="/search" method="post">
+
+                    <div class="field-container" >
+                        <!--Input Box-->
+                        <input type="text" placeholder={{ term }} class="search_field" name="term" autocomplete="off"/>
+                        <!--Search Icon-->
+                        <div class="icons-container">
+                            <input type="image" value="" onclick="" class="search-btn" src="../static/images/loupe.png" style="width: 26px;vertical-align: middle">
+                        </div>
+                    </div>
+
+                    <div class="search_sub" id="keyword" style="margin: 0 auto">
+                        <span>연관 키워드</span>
+                        <input type="hidden" name="mon0" value="{{ rel_term[0] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[0] }}>
+
+                        <input type="hidden" name="mon1" value="{{ rel_term[1] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[1] }}>
+
+                        <input type="hidden" name="mon2" value="{{ rel_term[2] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[2] }}>
+
+                        <input type="hidden" name="mon3" value="{{ rel_term[3] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[3] }}>
+
+                        <input type="hidden" name="mon4" value="{{ rel_term[4] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[4] }}>
                     </div>
                 </form>
             </div>
+
+
         </section>
 
 
@@ -73,10 +96,11 @@
                 <!--Example Sentence-->
                 <div class="left_result" id="example_result" style="float: left; width: 65%">
                     <div style="width: 95%">
-                        <span class="chart__title">Example Sentence</span>
+                        <span class="chart__title">예문 추출</span>
                         <!--Positive & Negative index-->
                         <div style="float: left;position: relative;">
                             <p>{{ sentence }}</p>
+                            <p>{{ term }}</p>
                         </div>
                     </div>
                 </div>
@@ -85,7 +109,7 @@
                 <div class="right_result" id="sentimental_result" style="float: left; width: 35%;">
                     <div class="charts">
                         <div class="chart chart--dev">
-                            <span class="chart__title">Sentimant Analysis</span>
+                            <span class="chart__title">감성분석</span>
                             <!--Positive & Negative index-->
                             <div style="float: left;position: relative;">
                                 <ul style=" list-style: none; padding-left: 0px;">
@@ -118,7 +142,7 @@
                 <!--Frequency & Rate Analysis-->
                 <div class="left_result" id="freq_rate_result" style="float: left; width: 65%">
 
-                    <span class="chart__title">Frequency by Field</span>
+                    <span class="chart__title">분야별 사용 빈도</span>
 
                     <!--Positive & Negative index-->
                     <div style="width:90%; position: relative">
@@ -201,7 +225,7 @@
 
                 <!--Amudomolla graph-->
                 <div class="right_result" id="Amudomolla_result" style="float: left; width: 35%">
-                    <span class="chart__title">Ratio by Internet Site</span>
+                    <span class="chart__title">데이터 출처별 비율</span>
                     <!--Positive & Negative index-->
                     <div style="width:95%; position: relative;">
                         <canvas id="radar-chart" width="80%" height="80%"></canvas>
