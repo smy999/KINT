@@ -18,15 +18,74 @@ sentence = "예문 출력 Test입니다."
 sentimental = ["68%", "32%"]
 
 # 3.1. 분야(커뮤니티)별 비율
+
+# 3.1.1. x축 12달
+# dataset=[{
+#     "label": "Poitics",
+#     "data": [randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101)
+#              ]
+# },{
+#     "label": "Humor",
+#     "data": [randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101)
+#              ]
+# },{
+#     "label": "Entertainment",
+#     "data": [randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101)
+#              ]
+# },{
+#     "label": "News",
+#     "data": [randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101),
+#              randrange(1, 101)
+#              ]
+# }]
+
+# 3.1.2. x축 6개
 dataset=[{
     "label": "Poitics",
     "data": [randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
@@ -36,12 +95,6 @@ dataset=[{
 },{
     "label": "Humor",
     "data": [randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
@@ -56,12 +109,6 @@ dataset=[{
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101)
              ]
 },{
     "label": "News",
@@ -70,15 +117,10 @@ dataset=[{
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
              randrange(1, 101)
              ]
 }]
+
 # 3.2. json 형식으로 변환
 jsdata = json.dumps(dataset, indent=4)
 
@@ -86,10 +128,10 @@ jsdata = json.dumps(dataset, indent=4)
 #########################################################
 
 # 데이터셋 확인
-print(sentence)
-print(sentimental)
-print(dataset)
-print(jsdata)
+# print(sentence)
+# print(sentimental)
+# print(dataset)
+# print(jsdata)
 
 # labels = [_ for _ in dataset.keys()]
 # data = [_ for _ in dataset.values()]

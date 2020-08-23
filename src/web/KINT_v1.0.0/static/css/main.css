@@ -2653,6 +2653,12 @@ section.special, article.special {
 }
 
 /*search.html*/
+#search_main >#wrapper> #header {
+	padding: 2em 5em 1em 5em;
+}
+
+
+/*search.html*/
 section #result_sec {
 	padding: 5em 5em 1em 5em ;
 	margin-top: 20px;
@@ -2666,16 +2672,14 @@ section #search_sec {
 }
 
 /*search.html*/
-search.html
-section .left_result{
-	padding-right: 10% ;
-}
-
-/*search.html*/
 section #result_sec #main{
 	position: relative;
 	padding-top: 5em;
 	flex: 1; /*화면 크기 줄였을 때 세로정렬을 위해*/
+}
+
+#result_sec>#main>div {
+	margin-bottom: 2em;
 }
 
 /*화면 크기 줄였을 때 세로정렬을 위해*/
@@ -3678,12 +3682,13 @@ table.alt tbody tr td {
 
 /*search.html*/
 #search_main {
-	padding: 5em 5em 3em 5em ;
+	padding: 2em 5em 3em 5em ;
 }
 
 #main > .main:first-child {
 	border-top: 0;
-	border-top: solid 1px #dddddd;
+	/*border-top: solid 1px #dddddd;*/
+	padding-top: 150px;
 }
 
 #main > .main > .image.main:first-child {
@@ -3755,6 +3760,10 @@ table.alt tbody tr td {
 		width: 100% !important;
 	}
 
+	#result_sec .left_result>div{
+		width: 100%;
+	}
+
 }
 
 @media screen and (max-width: 736px) {
@@ -3782,6 +3791,9 @@ table.alt tbody tr td {
 		width: 100% !important;
 	}
 
+	#result_sec .left_result>div{
+		width: 100%;
+	}
 }
 
 @media screen and (max-width: 480px) {
@@ -3813,6 +3825,10 @@ table.alt tbody tr td {
 		flex-direction: column;
 		/*margin-left: 0;*/
 		width: 100% !important;
+	}
+
+	#result_sec .left_result>div{
+		width: 100%;
 	}
 }
 
@@ -4021,6 +4037,7 @@ table.alt tbody tr td {
 	border-radius: 3px;
 	box-shadow: 0px 8px 15px rgba(75, 72, 72, 0.1);
 	transition: all 0.4s ease;
+	color: black;
 }
 
 .field:focus {
@@ -4055,9 +4072,13 @@ table.alt tbody tr td {
 	/*box-shadow: 10px 10px 20px rgba(219, 23, 23, 0.3);*/
 	/*filter: drop-shadow(10px 10px 20px );*/
 	/*background: rgba(219, 23, 23, 0);*/
-
 }
 
+
+.search-btn:focus .search-btn{
+	-webkit-filter: opacity(.5) drop-shadow(0 0 0 cornflowerblue);
+	filter: opacity(.5) drop-shadow(0 0 0 cornflowerblue);
+}
 
 /*감성분석 가로 막대 그래프*/
 .skills {
@@ -4083,10 +4104,10 @@ table.alt tbody tr td {
 }
 .chart__title {
 	display: block;
-	margin: 0 0 20px;
-	font-weight: bold;
-	font-size: x-large;
-	color: black;
+	margin: 0 0 30px;
+	font-weight: 500;
+	font-size: large;
+	color: #86a2c2;
 	/*opacity: 0;*/
 	/*animation: 1s anim-lightspeed-in ease forwards;*/
 }
