@@ -196,9 +196,9 @@ class Sentiment:
         vocab2idx = {vocab: idx for idx, vocab in enumerate(idx2vocab)}  # 단어:index 구조의 dictionary
         temp = most_similar(k, pmi, vocab2idx, idx2vocab)
         similar = list()
-        for _ in temp[0]:
+        for _ in temp:
             if len(_[0]) > 1 and _[1] > 0.3:
-                similar.extend(_)
+                similar.append(_)
 
         query = vocab2idx[k]
         submatrix = pmi[query, :].tocsr()  # get the row of query
