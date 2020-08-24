@@ -5,7 +5,6 @@ from soynlp.word import pmi as pmi_func
 from soynlp.tokenizer import LTokenizer
 import pandas as pd
 import sqlite3
-import numpy as np
 import re
 from string import punctuation
 
@@ -18,12 +17,12 @@ class Sentiment:
     def __init__(self):
         self.word_extractor = WordExtractor()
 
-    def extract_sent(self, df, words):
+    def extract_sent(self, df, words): # DataFrame 입력 및 신어 입력
         # 불용어 처리
         df['head'] = df['head'].map(lambda x: pattern3.sub(' ',
                                                            pattern2.sub('',
                                                                         pattern1.sub('', x))))
-        # sentence 추출
+        # 신어에 해당하는 sentences 추출
         sent = defaultdict(lambda: 0)
         for w in words:
             temp = [s for s in df['head'] if w in s]
@@ -32,7 +31,7 @@ class Sentiment:
         return sent
 
     # 입력 k, v에 대해서 (k는 word, v는 sentence이다.) 가장 유사한 10개의 단어에 대해서 (단어, pmi) 쌍을 출력해준다.
-    def extract_most_related(self, k, v, words, num=10):
+    def extract_most_related(self, k, v, words, num=10): # word와 sentence, 해당 신어, 출력할 유사한 단어의 갯수 입력
         self.word_extractor.train([v])
         cohesions = self.word_extractor.all_cohesion_scores()
         l_cohesions = {word: score[0] for word, score in cohesions.items()}
@@ -41,7 +40,7 @@ class Sentiment:
         x, idx2vocab = sent_to_word_contexts_matrix([v], windows=3, min_tf=10, tokenizer=tokenizer,
                                                     dynamic_weight=False, verbose=True)
         pmi, px, py = pmi_func(x, min_pmi=0, alpha=0.0, beta=0.75)
-        vocab2idx = {vocab: idx for idx, vocab in enumerate(idx2vocab)}
+        vocab2idx = {vocab: idx for idx, vocab in enumerate(idx2vocab)} # 단어:index 구조의 dictionary
         query = vocab2idx[k]
         submatrix = pmi[query, :].tocsr()  # get the row of query
         contexts = submatrix.nonzero()[1]  # nonzero() return (rows, columns)
@@ -50,12 +49,12 @@ class Sentiment:
         most_relateds = sorted(most_relateds, key=lambda x: -x[1])[:num]
         most_relateds = [(idx2vocab[idx], pmi_ij) for idx, pmi_ij in most_relateds if len(idx2vocab[idx]) > 1]
 
-        return most_relateds
+        return most_relateds # 유사한 단어 출력
 
     # 입력 word - sent 쌍으로 된 입력에 대해서 sentiment 점수를 excel에 저장해주고
     # 신조어와 most_related (단어, pmi) 쌍을 출력해준다.
-    def cal_score(self, sentence):
-        mapping_most_related = defaultdict(lambda: 0)
+    def cal_score(self, sentence): # 신어-문장으로 된 DataFrame 입력
+        mapping_most_related = defaultdict(lambda: 0) # 재실행할 때, 효율적으로 하기 위해서 mapping_most_related에 해당 most_related 저장
 
         # dictionary 형태로 변환한다.
         sent = defaultdict(lambda: 0)
@@ -68,6 +67,7 @@ class Sentiment:
         # 이는, 처음에 most_related 한 것들 중 길이가 1보다 큰 단어에 대해서 추출하여 직접 라벨링하였다.
 
         # 각 단어에 대해서 sentiment 점수를 계산한다.
+        # sentiment 점수는 pmi 값 * 이전 sentiment 점수를 더하는 방식으로 update 된다.
         for k, v in sent.items():
             mapping_most_related[k] = self.extract_most_related(k,v,words)
             pn_score = 0
@@ -82,10 +82,10 @@ class Sentiment:
 
         return mapping_most_related
 
-    # sentiment_result에서 상위 3개씩 positive, negative 단어를 뽑아서 그에 대한 most_related 20개의 감성사전 score update
+    # sentiment_result에서 상위 3개씩 positive, negative 단어를 뽑아서 그에 대한 most_related 30개의 감성사전 score update
     # 이 때, 이미 positive와 negative 목록에 있는 애들은 중복해서 update 되지 않도록 설정.
     # 즉, 신조어에 대한 감성을 평가하기 위해 학습하는 과정이다.
-    def update_score(self, positive, negative, sentiment_result):
+    def update_score(self, positive, negative, sentiment_result): # 이미 업데이트 된 positive 목록과 negative 목록, 업데이트하고자하는 감성분석 결과를 입력한다.
         sent_dict = defaultdict(lambda: 0)
         # (positive) top3 단어에 대해서, sent_dict에 '단어' : 'P' 로 추가
         count = 0
@@ -168,9 +168,10 @@ class Sentiment:
         test2 = pd.DataFrame(test[0].values, columns=['P/N'])
         pd.concat([test1, test2], axis=1).to_excel('sentiment.xlsx')
 
-        return positive, negative
+        return positive, negative # 업데이트된 postive, negative 목록 출력
 
-    def sentiment_analysis(self, sentiment, mapping_most_related):
+    # 감성사전을 기반으로 감성분석 진행
+    def sentiment_analysis(self, sentiment, mapping_most_related): # 감성사전과 mapping_most_related 입력
         score_dict = defaultdict(lambda: 0)
         for k, v in mapping_most_related.items():
             pn_score = 0
@@ -179,4 +180,4 @@ class Sentiment:
                     pn_score += _[1] * sentiment[sentiment[0] == _[0]]['P/N'].iloc[0]
             score_dict[k] = pn_score
         temp = pd.DataFrame(sorted(score_dict.items(), key=lambda _: _[1], reverse=True))
-        temp.to_excel('sentiment_result.xlsx')
+        temp.to_excel('sentiment_result.xlsx') # 감성분석 결과 excel에 저장
