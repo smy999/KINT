@@ -3,6 +3,7 @@ from soynlp.word import WordExtractor
 from soynlp.vectorizer import sent_to_word_contexts_matrix
 from soynlp.word import pmi as pmi_func
 from soynlp.tokenizer import LTokenizer
+from soynlp.utils import most_similar
 import pandas as pd
 import sqlite3
 import re
@@ -181,3 +182,16 @@ class Sentiment:
             score_dict[k] = pn_score
         temp = pd.DataFrame(sorted(score_dict.items(), key=lambda _: _[1], reverse=True))
         temp.to_excel('sentiment_result.xlsx') # 감성분석 결과 excel에 저장
+
+    # 입력 k, v에 대해서 (k는 word, v는 sentence이다.) 가장 유사한 10개의 단어에 대해서 (단어, pmi) 쌍을 출력해준다.
+    def most_similar(self, k, v, words): # word와 sentence, {해당 신어:1.0} , 출력할 유사한 단어의 갯수 입력
+        self.word_extractor.train([v])
+        cohesions = self.word_extractor.all_cohesion_scores()
+        l_cohesions = {word: score[0] for word, score in cohesions.items()}
+        l_cohesions.update(words)
+        tokenizer = LTokenizer(l_cohesions)
+        x, idx2vocab = sent_to_word_contexts_matrix([v], windows=3, min_tf=10, tokenizer=tokenizer,
+                                                    dynamic_weight=False, verbose=True)
+        pmi, px, py = pmi_func(x, min_pmi=0, alpha=0.0, beta=0.75)
+        vocab2idx = {vocab: idx for idx, vocab in enumerate(idx2vocab)}  # 단어:index 구조의 dictionary
+        return most_similar(k, pmi, vocab2idx, idx2vocab) # 해당 신어와 가장 유사한 단어 10개를 출력
