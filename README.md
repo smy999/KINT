@@ -18,7 +18,7 @@
 
 # 진행         
 다음은 프로젝트의 자동화 시스템 구성도입니다.
-![system](https://user-images.githubusercontent.com/33407191/89900519-cf1aef80-dc1e-11ea-97ab-e201765e17ca.png)
+![system](https://user-images.githubusercontent.com/68207910/90992117-93056880-e5e8-11ea-8b94-1d519dd45982.png)
 
 ## Model 1. 신어 감지 및 자동 분류 
 
