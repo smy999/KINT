@@ -194,4 +194,18 @@ class Sentiment:
                                                     dynamic_weight=False, verbose=True)
         pmi, px, py = pmi_func(x, min_pmi=0, alpha=0.0, beta=0.75)
         vocab2idx = {vocab: idx for idx, vocab in enumerate(idx2vocab)}  # 단어:index 구조의 dictionary
-        return most_similar(k, pmi, vocab2idx, idx2vocab) # 해당 신어와 가장 유사한 단어 10개를 출력
+        temp = most_similar(k, pmi, vocab2idx, idx2vocab)
+        similar = list()
+        for _ in temp[0]:
+            if len(_[0]) > 1 and _[1] > 0.3:
+                similar.extend(_)
+
+        query = vocab2idx[k]
+        submatrix = pmi[query, :].tocsr()  # get the row of query
+        contexts = submatrix.nonzero()[1]  # nonzero() return (rows, columns)
+        pmi_i = submatrix.data
+        most_relateds = [(idx, pmi_ij) for idx, pmi_ij in zip(contexts, pmi_i)]
+        most_relateds = sorted(most_relateds, key=lambda x: -x[1])[:10]
+        most_relateds = [(idx2vocab[idx], pmi_ij) for idx, pmi_ij in most_relateds if len(idx2vocab[idx]) > 1]
+
+        return similar, most_relateds
