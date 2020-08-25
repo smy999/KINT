@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<!--suppress ALL -->
+<html>
+<head>
+    <title>KINT</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <noscript><link rel="stylesheet" href="../static/css/noscript.css" /></noscript>
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- 차트 링크 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <!-- 부트스트랩 -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+    <!--chart.js Line graph CDN-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+</head>
+<body class="is-preload">
+
+
+<!-- Nav -->
+<nav id="search_nav">
+    <ul>
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="/search">Search</a></li>
+        <li><a href="/">Open API</a></li>
+        <li><a href="/">Contact</a></li>
+    </ul>
+
+</nav>
+<main  id="search_main">
+    <!--Wrapper-->
+    <div id="wrapper" style="max-width: calc(100% - 4em); width: 100%">
+
+        <!-- Header -->
+        <header id="header" style="padding: 2em 5em 1em 5em;">
+            <h3 style="font: inherit; font-size: 1.5em">Search & Analysis</h3>
+        </header>
+
+        <!-- Search Bar Section-->
+        <section id="search_sec">
+            <div class="search-bar" style="text-align: center; margin-bottom: 50px;">
+                <!--app.py와 데이터를 주고받기 위한 form-->
+                <form action="/" method="post">
+
+                    <div class="field-container" >
+                        <!--Input Box-->
+                        <input type="text" placeholder="검색어를 입력하세요" class="search_field" name="term" autocomplete="off"/>
+                        <!--Search Icon-->
+                        <div class="icons-container">
+                            <input type="image" value="" onclick="" class="search-btn" src="../static/images/loupe.png" style="width: 26px;vertical-align: middle">
+                        </div>
+                    </div>
+
+                    <div class="search_sub" id="keyword" style="margin: 0 auto">
+                        <span>연관 키워드</span>
+                        <input type="hidden" name="mon0" value="{{ month_term[0] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value={{ month_term[0] }}>
+
+                        <input type="hidden" name="mon1" value="{{ month_term[1] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value={{ month_term[1] }}>
+
+                        <input type="hidden" name="mon2" value="{{ month_term[2] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value={{ month_term[2] }}>
+
+                        <input type="hidden" name="mon3" value="{{ month_term[3] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value={{ month_term[3] }}>
+
+                        <input type="hidden" name="mon4" value="{{ month_term[4] }}">
+                        <input class="mon_bnt" type="submit" name="mon" value={{ month_term[4] }}>
+                    </div>
+                </form>
+            </div>
+
+
+        </section>
+
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/js/jquery.scrollex.min.js"></script>
+<script src="../static/js/jquery.scrolly.min.js"></script>
+<script src="../static/js/browser.min.js"></script>
+<script src="../static/js/breakpoints.min.js"></script>
+<script src="../static/js/util.js"></script>
+<script src="../static/js/main.js"></script>
+
+</body>
+</html>

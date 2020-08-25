@@ -53,7 +53,7 @@
         <section id="search_sec">
             <div class="search-bar" style="text-align: center; margin-bottom: 50px;">
                 <!--app.py와 데이터를 주고받기 위한 form-->
-                <form action="/search" method="post">
+                <form action="/" method="post">
 
                     <div class="field-container" >
                         <!--Input Box-->
@@ -66,20 +66,10 @@
 
                     <div class="search_sub" id="keyword" style="margin: 0 auto">
                         <span>연관 키워드</span>
-                        <input type="hidden" name="mon0" value="{{ rel_term[0] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[0] }}>
-
-                        <input type="hidden" name="mon1" value="{{ rel_term[1] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[1] }}>
-
-                        <input type="hidden" name="mon2" value="{{ rel_term[2] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[2] }}>
-
-                        <input type="hidden" name="mon3" value="{{ rel_term[3] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[3] }}>
-
-                        <input type="hidden" name="mon4" value="{{ rel_term[4] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ rel_term[4] }}>
+                        {%  for r in rel_term %} <!-- 집가서 꼭하기 -->
+{#                        <input type="hidden" name="mon{{ r }}" value="{{ r }}">#}
+                        <input class="mon_bnt" type="submit" name="mon" value=#{{ r }}>
+                        {%  endfor %}
                     </div>
                 </form>
             </div>
