@@ -67,7 +67,7 @@
                     <div class="search_sub" id="keyword" style="margin: 0 auto">
                         <span>연관 키워드</span>
                         {%  for r in rel_term %} <!-- 집가서 꼭하기 -->
-{#                        <input type="hidden" name="mon{{ r }}" value="{{ r }}">#}
+                            <!-- <input type="hidden" name="mon{{ r }}" value="{{ r }}"> -->
                         <input class="mon_bnt" type="submit" name="mon" value=#{{ r }}>
                         {%  endfor %}
                     </div>
