@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import json
 import pandas as pd
 from random import *
+import xlrd
 
 app = Flask(__name__)
 
@@ -124,6 +125,9 @@ dataset=[{
 # 3.2. json 형식으로 변환
 jsdata = json.dumps(dataset, indent=4)
 
+#4 이달의 신조어
+month_term = ["꿀잼", "상상코로나", "가성비", "가즈아", "나일리지"]
+
 
 #########################################################
 
@@ -132,6 +136,7 @@ jsdata = json.dumps(dataset, indent=4)
 # print(sentimental)
 # print(dataset)
 # print(jsdata)
+print(month_term)
 
 # labels = [_ for _ in dataset.keys()]
 # data = [_ for _ in dataset.values()]
@@ -149,9 +154,70 @@ term=""
 
 
 #######################################################################################
-# 메인 페이지: home
+
+
+
+# print(df2)
+# print(df2[0])
+# # row 정보 가져오기
+# print(df2.iloc[1])
+# # row 정보 가져오기
+# print(df2.loc[0])
+# # 데이터 개수 확인
+# print(len(df2))
+
+
+
+
+
+# t='가성비'
+# rel_term = list()
+#
+# for i in range(591):
+#     if t == df[i]['key']:
+#         print(df[i])
+#         keyLen=len(df[i])
+#         print(len(df[i]))
+#         for j in range(0, keyLen-1):
+#             value = tuple(df[i][j].split("'"))
+#             print(value)
+#             rel_term.append(value[1])
+#
+# print(rel_term)
+
+
+
+############################### 연관 키워드 #############################################
+
+# 연관 키워드 엑셀 파일 불러오기
+df2 = pd.read_excel('key.xlsx')
+# print(df2)
+
+# 신어 목록 출력
+# print(df2['key'])
+
+# 신어 개수(= row 수)
+dfLen = len(df2)
+
+# 편의를 위해 row와 column 뒤집기
+df = df2.transpose()
+# print(df)
+
+# Nan 값 오류를 방지하기 위해 0으로 값 변경
+df = df.fillna(0)
+# print(df)
+
+# print(df.loc['key'])
+################################### 메인 페이지 ####################################################
+
+# home page
 @app.route('/')
 def home():
+    # 현재 실행 위치 출력
+    print('home')
+    # reauest 방식 확인 출력
+    print(request.method)
+
     # 디비 값 받아오기 연습
     # conn = sqlite3.connect('HP.db')
     # cur = conn.cursor()
@@ -161,55 +227,163 @@ def home():
     # print(type(df))
     # print(df)
 
-    # 엑셀 값 받아오기 연습
-    # df2 = pd.read_excel('origin.xlsx')
-    # print(df2['index'])
-
-    return render_template("home.html")
+    # home.html 렌더링
+    return render_template("home.html", month_term=month_term)
 
 
-#######################################################################################
-# home 페이지에서 검색할 때
+################################ 검색 페이지 ##################################################
+
+# search
 @app.route('/', methods=['POST', 'GET'])
-def search1():
-    # 기본 페이지: home
-    render_template('home.html')
+def search():
+    # 검색 기본 페이지 > search2.html
+    render_template('search2.html', month_term=month_term)
+    # 현재 실행 위치 출력
+    print('search')
+    # request 방식 확인 출력
+    print(request.method)
 
+    # "POST" 일 때
     if request.method == 'POST':
-        # html에서 입력된 용어 받아오기
+        # render_template('search2.html', month_term=month_term)
+
+        # 변수 초기화
+        result = ""
+
+        # html에서 입력된 검색어 받아오기
         req = request.form.to_dict()
+        print(req)
+        # 검색어 받아와서 필터링
         term = req['term']
+        term = term.replace('#', '')
+        term = term.replace('들', '')
+        print(term)
 
-        # 파이썬 상에서 인자 출력 test
-        print("search1: "+term)
-        print("search1: "+sentimental[0], sentimental[1])
-        print("search1: "+sentence)
-        return render_template('search.html', sent1=sentimental[0], sent2=sentimental[1], sentence=sentence, term=term, dataset=dataset, jsdata=jsdata)
-
-#######################################################################################
-# search 페이지에서 검색할 때
-# search >> search
-@app.route('/search', methods=['POST', 'GET'])
-def search2():
-    # 기본 페이지: search
-    render_template('search.html')
-
-    if request.method == 'POST':
-        # html에서 입력된 용어 받아오기
-        req = request.form.to_dict()
-        # 입력된 용어 term에 저장
-        term = req['term']
-
-        # 파이썬 상에서 인자 출력 test
-        print("search2: "+term)
-        print("search2: "+sentimental[0], sentimental[1])
-        print("search2: "+sentence)
-
-        # 위의 결과를 인자로 포함하여 search 페이지 렌더링
-        return render_template('search.html', sent1=sentimental[0], sent2=sentimental[1], sentence=sentence, term=term, dataset=dataset, jsdata=jsdata)
+        # 검색어에 맞는 연관 키워드 추출
+        rel_term = list()
+        varbreak = 0
+        for i in range(dfLen):
+            if term == df[i]['key']:
+                varbreak = 0
+                print(df[i])
+                keyLen = len(df[i])
+                print(len(df[i]))
+                for j in range(0, keyLen - 1):
+                    if df[i][j] == 0:
+                        print(j,"is NaN")
+                        continue
+                    value = tuple(df[i][j].split("'"))
+                    print(value)
+                    rel_term.append(value[1])
+                break
+            else:
+                varbreak = 1
+        print(rel_term)
 
 
-######################################################################################
-# 실행
+
+        # 1. 입력된 검색어가 없을 때 처리방법
+        if len(term) == 0:
+            # 1-1. 검색어가 없고, 이달의 신조어가 클릭되었을 때
+            if 'mon' in req:
+                # 선택된 이달의 신조어를 검색어로 변경하고 필터링
+                term = req['mon']
+                print('mon이 있을 때')
+                term = term.replace('#', '')
+                term = term.replace('들', '')
+                print(term)
+
+                # 바뀐 검색어에 대해 연관 키워드 추출
+                rel_term = list()
+                varbreak = 0
+                for i in range(dfLen):
+                    if term == df[i]['key']:
+                        varbreak = 0
+                        print(df[i])
+                        keyLen = len(df[i])
+                        print(len(df[i]))
+                        for j in range(0, keyLen - 1):
+                            if df[i][j] == 0:
+                                print(j, "is NaN")
+                                continue
+                            value = tuple(df[i][j].split("'"))
+                            print(value)
+                            rel_term.append(value[1])
+                        break
+                    else:
+                        varbreak = 1
+                print(rel_term)
+
+                if varbreak == 1:
+                    print('검색어에 맞는 결과 없음')
+                    return render_template("search2.html", month_term=month_term, result="no", term=term)
+                else:
+                    print('검색어에 맞는 결과 있음')
+                    return render_template('search.html', sent1=sentimental[0], sent2=sentimental[1], sentence=sentence,
+                                           term=term, dataset=dataset, jsdata=jsdata, rel_term=rel_term,
+                                           month_term=month_term)
+
+
+
+            # 1-2. 검색어도 없고, 이달의 신조어 클릭도 아닐 때 > 그냥 검색 버튼을 누르거나 검색창에서 Enter 눌렀을 때
+            else:
+                print('mon이 없을 때')
+                # 검색어에 맞는 결과가 없을 때 > "검색 결과가 없습니다." 출력
+                return render_template("search2.html", month_term=month_term, result="")
+
+        # 2. 입력된 검색어가 있을 때
+        # 2-1. 위에서 필더링한 검색어의 결과가 없을 때 > 검색 페이지로 이동(search2.hmtl)
+        if varbreak == 1:
+            print('검색 결과가 없습니다.')
+            return render_template("search2.html", month_term=month_term, result="no", term=term)
+        # 2-2. 위에서 필터링한 검색어의 결과가 있을 때 > 결과 페이지로 이동(search.html)
+        else:
+            print('검색 결과가 있습니다.')
+            return render_template('search.html', sent1=sentimental[0], sent2=sentimental[1], sentence=sentence,
+                                   term=term, dataset=dataset, jsdata=jsdata, rel_term=rel_term,
+                                   month_term=month_term)
+
+
+    # # "GET" 일 때
+    # if request.method == 'GET':
+    #     # term = request.args.get('term0')
+    #     req = request.form.to_dict()
+    #     print(req)
+    #
+    #     if len(req) == 0:
+    #         return render_template("search2.html")
+    #
+    #
+    #     term = req['term']
+    #
+    #     if len(term) == 0:
+    #         if 'mon' in req:
+    #             term = req['mon']
+    #         else:
+    #             return render_template("search2.html", month_term=month_term)
+    #
+    #     return render_template('search.html', sent1=sentimental[0], sent2=sentimental[1], sentence=sentence,
+    #                            term=term, dataset=dataset, jsdata=jsdata, rel_term=rel_term, month_term=month_term)
+
+
+
+
+##################################### 에러 핸들링 ################################################
+
+# @app.errorhandler(500)
+# def page_not_found(error):
+#     return redirect('/search2')
+#
+#
+# @app.errorhandler(404)
+# def page_not_found1(error):
+#     return redirect('/search2')
+
+
+
+
+
+############################### 실행 #######################################################
+
 if __name__ == '__main__':
     app.run()
