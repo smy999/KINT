@@ -24,7 +24,7 @@ section, summary, time, mark, audio, video {
 	border: 0;
 	font-size: 100%;
 	/*noinspection CssInvalidPropertyValue*/
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Gothic A1', sans-serif;
 	color: black;
 	vertical-align: baseline;}
 
@@ -3472,115 +3472,122 @@ table.alt tbody tr td {
 }
 
 
-.api1 {
-	width: 33%;
-	height: 300px;
-	background-color: rgba(239, 137, 137, 0.3);
-	float: left;
-	/*background-image: url("/static/images/01.png");*/
-	/*background-size: cover;*/
-	/*background-repeat: no-repeat;*/
-}
-
-.api1 > img{
-	-webkit-filter: opacity(1.0) drop-shadow(0 0 0 #ffffff);
-	filter: opacity(1.0) drop-shadow(0 0 0 #ffffff);
-}
-
-.api2 {
-	width: 33%;
-	height: 300px;
-	background-color: rgba(0, 0, 255, 0.3);
-	float: left;
-	/*background-image: url("/static/images/01.png");*/
-	/*background-size: cover;*/
-	/*background-repeat: no-repeat;*/
-}
-
-.api2 > img{
-	-webkit-filter: opacity(1.0) drop-shadow(0 0 0 #ffffff);
-	filter: opacity(1.0) drop-shadow(0 0 0 #ffffff);
-	top: 5px;
-}
-
-
-.api3 {
-	width: 33%;
-	height: 300px;
-	background-color: rgba(110, 110, 111, 0.3);
-	float: left;
-	/*background-image: url("/static/images/01.png");*/
-	/*background-size: cover;*/
-	/*background-repeat: no-repeat;*/
-}
-
-.api3 > img{
-	-webkit-filter: opacity(1.0) drop-shadow(0 0 0 #ffffff);
-	filter: opacity(1.0) drop-shadow(0 0 0 #ffffff);
-}
-
 
 /*KINT API*/
-.api1 h3 {
-	font-size: 17px;
-	padding-bottom: 1px;
-	text-align: left;
+#api_desc>div{
+	position: relative;
+	width: 100%;
+	height: 220px;
+	margin-bottom: 10px;
+	font-family: 'Gothic A1', sans-serif;
 }
 
-.api1 p {
-	font-size: 15px;
-	text-align: left;
+#api_desc h5{
+	font-family: 'Gothic A1', sans-serif;
+	font-weight: 800;
+	margin-top: 12px;
+	margin-bottom: 10px;
+	margin-left: 10px;
 }
 
-.api2 h3 {
-	font-size: 17px;
-	padding-bottom: 1px;
-	text-align: left;
+#api_desc p{
+	font-family: 'Gothic A1', sans-serif;
+	font-weight: 400;
+	font-size: 18px;
+	margin-left: 10px;
+	margin-bottom: 5px;
 }
 
-.api2 p {
-	font-size: 15px;
-	text-align: left;
-}
-
-.api3 h3 {
-	font-size: 17px;
-	padding-bottom: 1px;
-	text-align: left;
-}
-
-.api3 p {
-	font-size: 15px;
-	text-align: left;
+#api_desc .p_bold{
+	font-family: 'Gothic A1', sans-serif;
+	font-weight: 500;
+	font-size: 18px;
+	margin-left: 10px;
+	margin-bottom: 5px;
 }
 
 
+#api_desc>div:first-child .api-left{
+	/*background-color: #EF8989;*/
+	background-color: rgba(239, 137, 137, 0.2);
+	/*border-color: rgba(239, 137, 137, 0.7);*/
+	/*border: 2px solid rgb(239, 179, 179);*/
+}
+
+#api_desc>div:nth-child(2) .api-right{
+	background-color: rgba(121, 121, 255, 0.2);
+	/*border-color: rgba(121, 121, 255, 0.7);*/
+	/*border: 2px solid rgb(157, 157, 229);*/
+}
 
 
+#api_desc>div:nth-child(3) .api-left{
+	/*background-color: #7f7f7f;*/
+	background-color: rgba(127, 127, 127, 0.2);
+	/*border-color: rgba(127, 127, 127, 0.7);*/
+	/*border: 2px solid rgb(173, 165, 165);*/
+}
 
-.api-img {
-	max-width: 650px;
-	width:45%;
+#api_desc>div:first-child .api-img{
 	opacity: 0.85;
 	/*box-shadow: 0px 8px 15px rgba(130, 128, 128, 0.5)*/
-	-webkit-filter: drop-shadow(5px 5px 5px #acaaaa);
-	filter: drop-shadow(5px 5px 5px #acaaaa);
+	-webkit-filter: drop-shadow(5px 5px 5px #ef8989);
+	filter: drop-shadow(5px 5px 5px #ef8989);
+	padding-top: 40px;
+	max-width: 500px;
+	width: 80%;
+}
+
+#api_desc>div:nth-child(2) .api-img{
+	opacity: 0.85;
+	/*box-shadow: 0px 8px 15px rgba(130, 128, 128, 0.5)*/
+	-webkit-filter: drop-shadow(5px 5px 5px #7979ff);
+	filter: drop-shadow(5px 5px 5px #7979ff);
+	padding-top: 40px;
+	max-width: 500px;
+	width: 80%;
+}
+
+#api_desc>div:nth-child(3) .api-img{
+	opacity: 0.85;
+	/*box-shadow: 0px 8px 15px rgba(130, 128, 128, 0.5)*/
+	-webkit-filter: drop-shadow(5px 5px 5px #7f7f7f);
+	filter: drop-shadow(5px 5px 5px #7f7f7f);
+	padding-top: 40px;
+	max-width: 500px;
+	width: 80%;
 }
 
 .api-text {
-	top:-120px;
+	/*top:-120px;*/
 	width: 50%;
 	text-align: left;
-	max-height: 150px;
-	position: relative;
+	/*max-height: 150px;*/
+	/*position: relative;*/
+	/*display:inline-block;*/
 }
 
-.api-text > p:first-child {
-	font-style: italic;
+.api-left {
+	float: left;
+	height: 100%;
+	padding: 20px;
+	text-align: left;
+	width: 48%;
+}
+
+.api-right {
+	float: right;
+	height: 100%;
+	padding: 20px;
+	text-align: left;
+	width: 48%;
 }
 
 
-
+/*.api-right img {*/
+/*	float: right;*/
+/*	display: inline-block;*/
+/*}*/
 
 
 
