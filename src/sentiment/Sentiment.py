@@ -18,7 +18,7 @@ class Sentiment:
     def __init__(self):
         self.word_extractor = WordExtractor()
 
-    def extract_sent(self, df, words): # DataFrame 입력 및 신어 입력
+    def extract_sent(self, df, words): # DataFrame(df) 입력 및 신어(words) 입력
         # 불용어 처리
         df['head'] = df['head'].map(lambda x: pattern3.sub(' ',
                                                            pattern2.sub('',
@@ -28,19 +28,24 @@ class Sentiment:
         for w in words:
             temp = [s for s in df['head'] if w in s]
             sent[w] = '  '.join(temp)
-
+        # DataFrame 에서 각 문장에서 신어가 포함되어있으면 그 문장을 temp에 저장한다. 
+        # sent dict에 key = 신어, value = 신어가 포함된 예문 전체(문장은 double space로 구분)로 저장한다. 
         return sent
 
     # 입력 k, v에 대해서 (k는 word, v는 sentence이다.) 가장 유사한 10개의 단어에 대해서 (단어, pmi) 쌍을 출력해준다.
     def extract_most_related(self, k, v, words, num=10): # word와 sentence, 해당 신어, 출력할 유사한 단어의 갯수 입력
-        self.word_extractor.train([v])
-        cohesions = self.word_extractor.all_cohesion_scores()
-        l_cohesions = {word: score[0] for word, score in cohesions.items()}
+        self.word_extractor.train([v]) # 신어에 대한 예문 전체를 word_extractor로 학습 
+        cohesions = self.word_extractor.all_cohesion_scores()  # cohesion_scores를 cohesions에 저장
+        l_cohesions = {word: score[0] for word, score in cohesions.items()} # 각 단어와 각 단어의 cohesion_forward값을 l_cohesions에 저장
         l_cohesions.update(words)
-        tokenizer = LTokenizer(l_cohesions)
+        tokenizer = LTokenizer(l_cohesions) #토크 나이저 학습
         x, idx2vocab = sent_to_word_contexts_matrix([v], windows=3, min_tf=10, tokenizer=tokenizer,
                                                     dynamic_weight=False, verbose=True)
+        # x:
+        # idx2vocab : LTokenizer를 통해 나온 단어들 목록
+        # 해당 단어 주위 3개 단어 추출 
         pmi, px, py = pmi_func(x, min_pmi=0, alpha=0.0, beta=0.75)
+        # x 의 (rows, columns) 에 대한 pmi 를 계산합니다. row 가 x, column 이 y 입니다.
         vocab2idx = {vocab: idx for idx, vocab in enumerate(idx2vocab)} # 단어:index 구조의 dictionary
         query = vocab2idx[k]
         submatrix = pmi[query, :].tocsr()  # get the row of query
@@ -49,7 +54,7 @@ class Sentiment:
         most_relateds = [(idx, pmi_ij) for idx, pmi_ij in zip(contexts, pmi_i)]
         most_relateds = sorted(most_relateds, key=lambda x: -x[1])[:num]
         most_relateds = [(idx2vocab[idx], pmi_ij) for idx, pmi_ij in most_relateds if len(idx2vocab[idx]) > 1]
-
+        # 단어 k와 유사한 contexts vector를 지닌 단어를 찾습니다.
         return most_relateds # 유사한 단어 출력
 
     # 입력 word - sent 쌍으로 된 입력에 대해서 sentiment 점수를 excel에 저장해주고
