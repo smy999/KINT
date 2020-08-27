@@ -4,6 +4,7 @@ import json
 import pandas as pd
 from random import *
 import xlrd
+import math
 
 app = Flask(__name__)
 
@@ -13,10 +14,10 @@ app = Flask(__name__)
 # Test Dataset
 
 # 1.예문
-sentence = "예문 출력 Test입니다."
+# sentence = "예문 출력 Test입니다."
 
 # 2.감성분석 [0]=긍정, [1]=부정
-sentimental = ["68%", "32%"]
+# sentimental = ["68%", "32%"]
 
 # 3.1. 분야(커뮤니티)별 비율
 
@@ -84,47 +85,26 @@ sentimental = ["68%", "32%"]
 # }]
 
 # 3.1.2. x축 6개
-dataset=[{
+dataset={
     "label": "Poitics",
     "data": [randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
-             randrange(1, 101)
-             ]
-},{
-    "label": "Humor",
-    "data": [randrange(1, 101),
+             randrange(1, 101),
+             randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101),
              randrange(1, 101)
              ]
-},{
-    "label": "Entertainment",
-    "data": [randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             ]
-},{
-    "label": "News",
-    "data": [randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101),
-             randrange(1, 101)
-             ]
-}]
+}
 
 # 3.2. json 형식으로 변환
 jsdata = json.dumps(dataset, indent=4)
-
+print(jsdata)
 #4 이달의 신조어
 month_term = ["꿀잼", "상상코로나", "가성비", "가즈아", "나일리지"]
 
@@ -153,38 +133,31 @@ term=""
 
 
 
-#######################################################################################
+################################# 감성 분석 #############################################
 
+# 연관 키워드 엑셀 파일 불러오기
+sent = pd.read_excel('News_sentiment.xlsx')
+print(sent)
 
+sentLen = len(sent)
+print(sentLen)
 
-# print(df2)
-# print(df2[0])
-# # row 정보 가져오기
-# print(df2.iloc[1])
-# # row 정보 가져오기
-# print(df2.loc[0])
-# # 데이터 개수 확인
-# print(len(df2))
-
-
-
-
-
-# t='가성비'
-# rel_term = list()
+# sentimental = list()
 #
-# for i in range(591):
-#     if t == df[i]['key']:
-#         print(df[i])
-#         keyLen=len(df[i])
-#         print(len(df[i]))
-#         for j in range(0, keyLen-1):
-#             value = tuple(df[i][j].split("'"))
-#             print(value)
-#             rel_term.append(value[1])
+# term = "직구족"
 #
-# print(rel_term)
-
+# for i in range(sentLen):
+#     if term == sent['Word'][i]:
+#         print('yes')
+#         pos = sent['Positive'][i]
+#         print(type(pos))
+#         pos = math.trunc(pos)
+#         print(pos)
+#         neg = 100 - pos
+#         print(neg)
+#         sentimental.append(pos)
+#         sentimental.append(neg)
+#         break
 
 
 ############################### 연관 키워드 #############################################
@@ -319,6 +292,20 @@ def search():
                     return render_template("search2.html", month_term=month_term, result="no", term=term)
                 else:
                     print('검색어에 맞는 결과 있음')
+
+                    sentimental = list()
+                    for i in range(sentLen):
+                        if term == sent['Word'][i]:
+                            # 예문 가져오기
+                            sentence = sent['Sentence'][i]
+                            # 감성 분석 결과 가져오기
+                            pos = sent['Positive'][i]
+                            pos = math.trunc(pos)
+                            neg = 100 - pos
+                            sentimental.append(str(pos)+"%")
+                            sentimental.append(str(neg)+"%")
+                            break
+
                     return render_template('search.html', sent1=sentimental[0], sent2=sentimental[1], sentence=sentence,
                                            term=term, dataset=dataset, jsdata=jsdata, rel_term=rel_term,
                                            month_term=month_term)
@@ -339,6 +326,20 @@ def search():
         # 2-2. 위에서 필터링한 검색어의 결과가 있을 때 > 결과 페이지로 이동(search.html)
         else:
             print('검색 결과가 있습니다.')
+
+            sentimental = list()
+            for i in range(sentLen):
+                if term == sent['Word'][i]:
+                    # 예문 가져오기
+                    sentence = sent['Sentence'][i]
+                    # 감성 분석 결과 가져오기
+                    pos = sent['Positive'][i]
+                    pos = math.trunc(pos)
+                    neg = 100 - pos
+                    sentimental.append(str(pos)+"%")
+                    sentimental.append(str(neg)+"%")
+                    break
+
             return render_template('search.html', sent1=sentimental[0], sent2=sentimental[1], sentence=sentence,
                                    term=term, dataset=dataset, jsdata=jsdata, rel_term=rel_term,
                                    month_term=month_term)
