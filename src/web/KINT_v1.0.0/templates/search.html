@@ -90,7 +90,6 @@
                         <!--Positive & Negative index-->
                         <div style="float: left;position: relative;">
                             <p>{{ sentence }}</p>
-                            <p>{{ term }}</p>
                         </div>
                     </div>
                 </div>
@@ -132,7 +131,7 @@
                 <!--Frequency & Rate Analysis-->
                 <div class="left_result" id="freq_rate_result" style="float: left; width: 65%">
 
-                    <span class="chart__title">분야별 사용 빈도</span>
+                    <span class="chart__title">전체 사용 빈도</span>
 
                     <!--Positive & Negative index-->
                     <div style="width:90%; position: relative">
@@ -144,30 +143,11 @@
                         new Chart(document.getElementById("canvas"), {
                             type: 'line',
                             data: {
-                                /* labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'], */
-                                labels: ['2', '4', '6', '8','10','12'],
+                                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
                                 datasets: [{
-                                    label: jsdata[0]["label"],
-                                    data: jsdata[0]["data"],
+                                    label: jsdata["label"],
+                                    data: jsdata["data"],
                                     borderColor: "rgb(255,211,164)",
-                                    backgroundColor: "rgba(255, 201, 14, 0)",
-                                    fill: true,
-                                },{
-                                    label: jsdata[1]["label"],
-                                    data: jsdata[1]["data"],
-                                    borderColor: "rgb(255,164,164)",
-                                    backgroundColor: "rgba(255, 201, 14, 0)",
-                                    fill: true,
-                                },{
-                                    label: jsdata[2]["label"],
-                                    data: jsdata[2]["data"],
-                                    borderColor: "rgb(189,191,252)",
-                                    backgroundColor: "rgba(255, 201, 14, 0)",
-                                    fill: true,
-                                },{
-                                    label: jsdata[3]["label"],
-                                    data: jsdata[3]["data"],
-                                    borderColor: "rgb(179,212,167)",
                                     backgroundColor: "rgba(255, 201, 14, 0)",
                                     fill: true,
                                 }]
@@ -225,7 +205,7 @@
                         new Chart(document.getElementById("radar-chart"), {
                             type: 'radar',
                             data: {
-                                labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+                                labels: ["Enter", "Poitics", "Mom", "Sopping", "News"],
                                 datasets: [
                                     {
                                         label: "1950",

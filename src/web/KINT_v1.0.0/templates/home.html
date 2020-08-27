@@ -40,7 +40,7 @@
             <li><a href="#" class="active">Home</a></li>
             <li><a href="#first">Open API</a></li>
             <li><a href="#second">Search</a></li>
-            <li><a href="#cta">Why KINT?</a></li>
+            <li><a href="#cta">Contact</a></li>
         </ul>
 
     </nav>
@@ -93,20 +93,20 @@
     <!-- Wrapper -->
     <div id="wrapper">
 
-        <div id="main" style="padding-top: 100px; padding-right: 50px; padding-left: 50px">
+        <div id="main" style="padding-top: 100px; padding-right: 60px; padding-left: 60px">
             <!-- First Section -->
             <section id="first" class="main special">
 
                 <header class="major">
                     <h2>KINT API</h2>
-                    <p>간단설명</p>
+                    <p>신어 감지 Model, 신어 분석 Model, 신어 DB를 통합 Open API로 제공</p>
                 </header>
 
                 <div id="api_desc" style="width: 100%; margin: 0 auto; padding: 0">
 
                     <div>
                         <div class="api-left">
-                            <h5>신어 감지 Model</h5>
+                            <h5>1. 신어 감지 Model</h5>
                             <p class="p_bold">수집, 전처리, 신어 감지</p>
                             <p>
                                 약 1300만개의 다양한 분야별 데이터를 수집<br>
@@ -126,8 +126,8 @@
                             <img class="api-img" src="../static/images/an1.png">
                         </div>
                         <div class="api-right">
-                            <h5>신어 분석 Model</h5>
-                            <p class="p_bold">예문추출, 감성분석, 연관키워드, 각종 통계분석</p>
+                            <h5>2. 신어 분석 Model</h5>
+                            <p class="p_bold">예문추출, 감성분석, 연관키워드, 통계분석</p>
                             <p>
                                 GRU을 통한 예문을 추출<br>
                                 준지도학습를 통해 감성분석 결과를 도출<br>
@@ -139,11 +139,12 @@
 
                     <div>
                         <div class="api-left">
-                            <h5>신어 Database</h5>
+                            <h5>3. 신어 Database</h5>
                             <p class="p_bold">신어 통합 정보 제공</p>
                             <p>위의 신어 감지, 신어 분석 모델을 통한<br>
                                 정제된 신어 데이터와 분석 결과 데이터 제공<br>
-                                신어, 출처, 수집 날짜, 추출예문, 연관키워드, 감성분석, 빈도분석
+                                신어, 출처, 수집 날짜, 추출예문, <br>
+                                연관키워드, 감성분석, 빈도분석 제공
                             </p>
                         </div>
                         <div class="api-right">
@@ -167,36 +168,37 @@
             <section id="second" class="main special">
 
                 <header class="major">
-                    <h2>KINT Analysis</h2>
-
+                    <h2>KINT Search</h2>
+                    <p>KINT API를 기반으로 한 다양한 분석 결과를 웹 기반 검색 서비스로 제공</p>
                 </header>
 
 
                 <ul class="statistics">
                     <div class="style1">
                         <img src="../static/images/example.png" style="width: 120px">
-                        <div>예문 출력</div>
+                        <div>Example sentence </div>
                     </div>
                     <div class="style2">
                         <img src="../static/images/sentimental.png" style="width: 120px">
-                        <div>감성 분석</div>
+                        <div>Sentiment analysis</div>
                     </div>
                     <div class="style3">
                         <img src="../static/images/graph.png" style="width: 120px">
-                        <div>통계적 분석</div>
+                        <div>Statistical analysis</div>
                     </div>
                     <div class="style5">
                         <img src="../static/images/keyword.png" style="width: 120px">
-                        <div>연관 키워드</div>
+                        <div>Related keywords</div>
                     </div>
                 </ul>
 
-                <p>KINT Search는 KINT API의 결과들을 통해 다양한 분석 결과를 시각화하여 보여줍니다.
+                <p style="column-count: 2; column-gap: 20px; font-weight: 300; ">
+                    KINT Search는 KINT Open API의 Model들을 통해 도출된 다양한 분석 결과를 시각화하여 보여줍니다.
                     예문을 통해 인터넷 신어들어 어떤 문맥에서 쓰는지 파악하고
-                    감성분석 결과를 통해 해당 검색어가 문맥에서 얼마나 긍정적으로, 부정적으로 쓰였는지 확인할 수 있습니다.
+                    감성분석 결과를 통해 해당 검색어가 문맥에서 얼마나 긍정적으로 그리고 부정적으로 쓰였는지 확인할 수 있습니다.
                     시계열 분석을 통해 시간별 빈도 분석 결과와 분야열 사용 비율을 그래프로 시각화하여 해당 단어가 어떤 분야에서 주로 쓰이고 언제부터 쓰였는지 쉽게 알 수 있습니다.
-                    또한 연관 키워드를 최대 5개까지 제공합니다. 위의 분석 결과를 통해 KINT API를 사용하지 않아도 누구나 인터넷 신어에 대해 쉽게 이해할 수 있도록 했습니다.
-                    마지막으로, 이달의 KINT를 통해 인터넷 신어 트랜드를 한눈에 확인해세요!</p>
+                    또한 연관 키워드를 최대 5개까지 제공합니다. KINT Search는 KINT API를 사용하지 않아도 누구나 인터넷 신어에 대해 쉽게 이해할 수 있도록 개발된 서비스입니다.
+                    마지막으로, 이달의 KINT를 통해 인터넷 신어 트랜드를 한눈에 확인하세요!</p>
 
                 <footer class="major">
                     <ul class="actions special">
@@ -274,38 +276,23 @@
         -->
 
 
-
-
         <!-- Footer -->
-        <footer id="footer">
-            <section>
-                <h2>Aliquam sed mauris</h2>
-                <p>Sed lorem ipsum dolor sit amet et nullam consequat feugiat consequat magna adipiscing tempus etiam dolore veroeros. eget dapibus mauris. Cras aliquet, nisl ut viverra sollicitudin, ligula erat egestas velit, vitae tincidunt odio.</p>
-                <ul class="actions">
-                    <li><a href="#" class="button">Learn More</a></li>
-                </ul>
-            </section>
-            <section>
-                <h2>Etiam feugiat</h2>
-                <dl class="alt">
-                    <dt>Address</dt>
-                    <dd>1234 Somewhere Road &bull; Nashville, TN 00000 &bull; USA</dd>
-                    <dt>Phone</dt>
-                    <dd>(000) 000-0000 x 0000</dd>
-                    <dt>Email</dt>
-                    <dd><a href="#">information@untitled.tld</a></dd>
-                </dl>
-                <ul class="icons">
-                    <li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
-                    <li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
-                    <li><a href="#" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
-                    <li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
-                    <li><a href="#" class="icon brands fa-dribbble alt"><span class="label">Dribbble</span></a></li>
-                </ul>
-            </section>
-            <p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
-        </footer>
+        <!--
 
+                <footer id="footer" style="background-color: 002BFF">
+                    <section>
+                        <p>프로젝트 추진 기관</p>
+                        <p>한국 데이터 진흥원</p>
+                        <p>고려대학교 빅데이터 캠퍼스</p>
+                    </section>
+                    <section>
+                        <dl class="alt">
+                            <dt>contact</dt>
+                            <dd>github: https://github.com/smy999/KINT</dd>
+                        </dl>
+                    </section>
+                </footer>
+        -->
     </div>
 
     <!-- Scripts -->
