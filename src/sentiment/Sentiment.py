@@ -39,9 +39,10 @@ class Sentiment:
         l_cohesions = {word: score[0] for word, score in cohesions.items()} # 각 단어와 각 단어의 cohesion_forward값을 l_cohesions에 저장
         l_cohesions.update(words)
         tokenizer = LTokenizer(l_cohesions) #토크 나이저 학습
+        # data수가 적은 News data에 대해서는 min_tf를 2로 설정한다.
         x, idx2vocab = sent_to_word_contexts_matrix([v], windows=3, min_tf=10, tokenizer=tokenizer,
                                                     dynamic_weight=False, verbose=True)
-        # x:
+        
         # idx2vocab : LTokenizer를 통해 나온 단어들 목록
         # 해당 단어 주위 3개 단어 추출 
         pmi, px, py = pmi_func(x, min_pmi=0, alpha=0.0, beta=0.75)
@@ -144,6 +145,7 @@ class Sentiment:
             nsent[ntemp['index'][_]] = ntemp['0'][_]
 
         # 긍정 단어에 대해서 most_related한 단어 30개 추출하여, 그들의 감성 score 업데이트
+        # data수가 적은 News data에 대해서는 25개 단어로 설정한다.
         temp_score_dict = defaultdict(lambda: 0)
         words = {_: 1.0 for _ in psent.keys()}
         for k, v in psent.items():
@@ -152,6 +154,7 @@ class Sentiment:
                 temp_score_dict[_[0]] += _[1] * 0.1
 
         # 부정 단어에 대해서 most_related한 단어 30개 추출하여, 그들의 감성 score 업데이트
+        # data수가 적은 News data에 대해서는 25개 단어로 설정한다.
         words = {_: 1.0 for _ in nsent.keys()}
         for k, v in nsent.items():
             most_relateds = self.extract_most_related(k,v,words, 30)
@@ -195,6 +198,7 @@ class Sentiment:
         l_cohesions = {word: score[0] for word, score in cohesions.items()}
         l_cohesions.update(words)
         tokenizer = LTokenizer(l_cohesions)
+        # data수가 적은 News data에 대해서는 min_tf를 2로 설정한다.
         x, idx2vocab = sent_to_word_contexts_matrix([v], windows=3, min_tf=10, tokenizer=tokenizer,
                                                     dynamic_weight=False, verbose=True)
         pmi, px, py = pmi_func(x, min_pmi=0, alpha=0.0, beta=0.75)
