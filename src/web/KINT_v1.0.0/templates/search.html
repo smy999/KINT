@@ -21,13 +21,13 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-
     <!--chart.js Line graph CDN-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <!-- Google font: Gothic A1, font-family: 'Gothic A1', sans-serif;-->
+    <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body class="is-preload">
+<body class="is-preload" style="background-color: #F7F0ED">
 
 
 <!-- Nav -->
@@ -57,7 +57,7 @@
 
                     <div class="field-container" >
                         <!--Input Box-->
-                        <input type="text" placeholder={{ term }} class="search_field" name="term" autocomplete="off"/>
+                        <input type="text" placeholder="검색어를 입력하세요" class="search_field" name="term" autocomplete="off"/>
                         <!--Search Icon-->
                         <div class="icons-container">
                             <input type="image" value="" onclick="" class="search-btn" src="../static/images/loupe.png" style="width: 26px;vertical-align: middle">
@@ -65,10 +65,10 @@
                     </div>
 
                     <div class="search_sub" id="keyword" style="margin: 0 auto">
-                        <span>연관 키워드</span>
-                        {%  for r in rel_term %} <!-- 집가서 꼭하기 -->
-                            <!-- <input type="hidden" name="mon{{ r }}" value="{{ r }}"> -->
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ r }}>
+                        <span>이달의 KINT</span>
+                        {%  for m in month_term %} <!-- 집가서 꼭하기 -->
+                            <input type="hidden" name="mon0" value="{{ m }}">
+                            <input class="mon_bnt" type="submit" name="mon" value=#{{ m }}>
                         {%  endfor %}
                     </div>
                 </form>
@@ -77,183 +77,13 @@
 
         </section>
 
-
+        <!-- 사용자가 검색어를 입력하거나 연관 검색어, 이달의 KINT를 눌렀으나 해당 용어가 신어 DB에 존재하지 않을 때 -->
         <section id="result_sec">
-
-            <!-- Results: 상단  -->
-            <div id="main" style="width: 100%; position: relative;">
-
-                <!--Example Sentence-->
-                <div class="left_result" id="example_result" style="float: left; width: 65%">
-                    <div style="width: 95%">
-                        <span class="chart__title">예문 추출</span>
-                        <!--Positive & Negative index-->
-                        <div style="float: left;position: relative;">
-                            <p>{{ sentence }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!--Sentimental Analysis graph-->
-                <div class="right_result" id="sentimental_result" style="float: left; width: 35%;">
-                    <div class="charts">
-                        <div class="chart chart--dev">
-                            <span class="chart__title">감성분석</span>
-                            <!--Positive & Negative index-->
-                            <div style="float: left;position: relative;">
-                                <ul style=" list-style: none; padding-left: 0px;">
-                                    <li style="padding-left: 0px;height: 30px; margin-bottom: 10px">
-                                        <span>Positive</span>
-                                    </li>
-                                    <li style="padding-left: 0px;height: 30px; margin-bottom: 10px">
-                                        <span>Negative</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <!--Positive & Negative graph-->
-                            <ul class="chart--horiz">
-                                <li class="chart__bar" style="width: {{ sent1 }}; list-style: none">
-                                    <span class="chart__label">{{ sent1 }}</span>
-                                </li>
-                                <li class="chart__bar" style="width: {{ sent2 }}; list-style: none">
-                                    <span class="chart__label">{{ sent2 }}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
+            <div id="main" style="width: 100%; position: relative; background: none">
+                {% if result == "no" %}
+                    <p style="text-align: center; font-size: 1em">"{{ term }}"에 대한 검색 결과가 없습니다.</p>
+                {% endif %}
             </div>
-
-            <!-- Results: 하단 -->
-            <div id="main" style="width: 100%; position: relative;">
-
-                <!--Frequency & Rate Analysis-->
-                <div class="left_result" id="freq_rate_result" style="float: left; width: 65%">
-
-                    <span class="chart__title">전체 사용 빈도</span>
-
-                    <!--Positive & Negative index-->
-                    <div style="width:90%; position: relative">
-                        <canvas id="canvas"></canvas>
-                    </div>
-
-                    <script>
-                        var jsdata = {{ jsdata|safe }};
-                        new Chart(document.getElementById("canvas"), {
-                            type: 'line',
-                            data: {
-                                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-                                datasets: [{
-                                    label: jsdata["label"],
-                                    data: jsdata["data"],
-                                    borderColor: "rgb(255,211,164)",
-                                    backgroundColor: "rgba(255, 201, 14, 0)",
-                                    fill: true,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                title: {
-                                    display: false,
-                                    text: '분야별 {{ term }} 사용 비율'
-                                },
-                                tooltips: {
-                                    mode: 'index',
-                                    intersect: false,
-                                },
-                                hover: {
-                                    mode: 'nearest',
-                                    intersect: true
-                                },
-                                scales: {
-                                    xAxes: [{
-                                        display: true,
-                                        scaleLabel: {
-                                            display: false,
-                                            labelString: 'x축'
-                                        }
-                                    }],
-                                    yAxes: [{
-                                        display: true,
-                                        ticks: {
-                                            suggestedMin: 0,
-                                        },
-                                        scaleLabel: {
-                                            display: false,
-                                            labelString: 'y축'
-                                        }
-                                    }]
-                                }
-                            }
-                        });
-
-                    </script>
-
-
-                </div>
-
-                <!--Amudomolla graph-->
-                <div class="right_result" id="Amudomolla_result" style="float: left; width: 35%">
-                    <span class="chart__title">데이터 출처별 비율</span>
-                    <!--Positive & Negative index-->
-                    <div style="width:95%; position: relative;">
-                        <canvas id="radar-chart" width="80%" height="80%"></canvas>
-                    </div>
-
-                    <script>
-                        new Chart(document.getElementById("radar-chart"), {
-                            type: 'radar',
-                            data: {
-                                labels: ["Enter", "Poitics", "Mom", "Sopping", "News"],
-                                datasets: [
-                                    {
-                                        label: "1950",
-                                        fill: true,
-                                        backgroundColor: "rgba(179,181,198,0.2)",
-                                        borderColor: "rgba(179,181,198,1)",
-                                        pointBorderColor: "#fff",
-                                        pointBackgroundColor: "rgba(179,181,198,1)",
-                                        data: [8.77,55.61,21.69,6.62,6.82]
-                                    }, {
-                                        label: "2050",
-                                        fill: true,
-                                        backgroundColor: "rgba(255,99,132,0.2)",
-                                        borderColor: "rgba(255,99,132,1)",
-                                        pointBorderColor: "#fff",
-                                        pointBackgroundColor: "rgba(255,99,132,1)",
-                                        pointBorderColor: "#fff",
-                                        data: [25.48,54.16,7.61,8.06,4.45]
-                                    }
-                                ]
-                            },
-                            options: {
-                                maintainAspectRatio: true,
-                                title: {
-                                    display: false,
-                                    text: 'Distribution in % of world population'
-                                },
-                                legend: {
-                                    display: true,
-                                    position: 'right'
-                                },
-                                layout: {
-                                    position: 'left'
-                                }
-                            }
-                        });
-                    </script>
-                </div>
-            </div>
-
-
-
-
-
-
-
-
-
         </section>
 
     </div>
