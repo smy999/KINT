@@ -82,36 +82,36 @@
             </header>
 
 
-<!--
-            <div>
-                <hr>
+            <!--
+                        <div>
+                            <hr>
 
-                <div style="padding-left: 100px; width: 100%; text-align: left; font-size: 1.5em; font-weight: 500">Model</div>
-                <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                    <span style="font-size: 1.2em; font-weight: 800; background-color: #485F8E; color: #ffffff">신어 감지 API</span>
-                    <p style="font-weight: 300">약 1300만개의 분야별 데이터를 수집하여 soynlp 기반으로 문장이나 문서를 용어 단위로 분리 후 KINT의 11개의 통계변수에 따라 신어 감지</p>
-                </div>
-                <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                    <span style="font-size: 1.2em; font-weight: 800; background-color: #F7D33B; color: #ffffff">감성 분석 API</span>
-                    <p style="font-weight: 300">Point Mutual Information(PMI) 기술을 기반으로 신어에 대한 감성을 분석하고 용어간의 연과도를 분석하여 연관 키워드를 추출</p>
-                </div>
-                <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                    <span style="font-size: 1.2em; font-weight: 800; background-color: #ED7C59; color: #ffffff">예문 추출 API</span>
-                    <p style="font-weight: 300">Bidirectional GRU와 N-gram을 기반으로 신어의 예문을 추출하여 신어가 사용되는 상황과 뜻 파악</p>
-                </div>
+                            <div style="padding-left: 100px; width: 100%; text-align: left; font-size: 1.5em; font-weight: 500">Model</div>
+                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                                <span style="font-size: 1.2em; font-weight: 800; background-color: #485F8E; color: #ffffff">신어 감지 API</span>
+                                <p style="font-weight: 300">약 1300만개의 분야별 데이터를 수집하여 soynlp 기반으로 문장이나 문서를 용어 단위로 분리 후 KINT의 11개의 통계변수에 따라 신어 감지</p>
+                            </div>
+                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                                <span style="font-size: 1.2em; font-weight: 800; background-color: #F7D33B; color: #ffffff">감성 분석 API</span>
+                                <p style="font-weight: 300">Point Mutual Information(PMI) 기술을 기반으로 신어에 대한 감성을 분석하고 용어간의 연과도를 분석하여 연관 키워드를 추출</p>
+                            </div>
+                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                                <span style="font-size: 1.2em; font-weight: 800; background-color: #ED7C59; color: #ffffff">예문 추출 API</span>
+                                <p style="font-weight: 300">Bidirectional GRU와 N-gram을 기반으로 신어의 예문을 추출하여 신어가 사용되는 상황과 뜻 파악</p>
+                            </div>
 
-                <hr>
+                            <hr>
 
-                <div style="padding-left: 100px; width: 100%; text-align: left; font-size: 1.5em; font-weight: 500">DB</div>
-                <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                    <span style="font-size: 1.2em; font-weight: 800; background-color: #0B5D5D; color: #ffffff">신어 DB API</span>
-                    <p style="font-weight: 300">KINT의 3가지 Model를 통해 정제된 신어 데이터와 신어에 대한 통계분석 결과, 감정분석 결과, 연관 키워드 및 예문추출 결과를 제공</p>
-                </div>
+                            <div style="padding-left: 100px; width: 100%; text-align: left; font-size: 1.5em; font-weight: 500">DB</div>
+                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                                <span style="font-size: 1.2em; font-weight: 800; background-color: #0B5D5D; color: #ffffff">신어 DB API</span>
+                                <p style="font-weight: 300">KINT의 3가지 Model를 통해 정제된 신어 데이터와 신어에 대한 통계분석 결과, 감정분석 결과, 연관 키워드 및 예문추출 결과를 제공</p>
+                            </div>
 
-                <hr>
+                            <hr>
 
-            </div>
--->
+                        </div>
+            -->
 
             <!-- api content -->
             <div id="api_desc" style="width: 100%; margin: 0 auto; padding-left: 100px; padding-right: 100px">
@@ -210,12 +210,14 @@
 
             <div style="padding-right: 100px; padding-left: 100px">
                 <p style="column-count: 2; column-gap: 20px; font-weight: 300; ">
-                KINT Search는 KINT Open API의 Model들을 통해 도출된 다양한 분석 결과를 시각화하여 보여줍니다.
-                예문을 통해 인터넷 신어들어 어떤 문맥에서 쓰는지 파악하고
-                감성분석 결과를 통해 해당 검색어가 문맥에서 얼마나 긍정적으로 그리고 부정적으로 쓰였는지 확인할 수 있습니다.
-                시계열 분석을 통해 시간별 빈도 분석 결과와 분야열 사용 비율을 그래프로 시각화하여 해당 단어가 어떤 분야에서 주로 쓰이고 언제부터 쓰였는지 쉽게 알 수 있습니다.
-                또한 연관 키워드를 최대 5개까지 제공합니다. KINT Search는 KINT API를 사용하지 않아도 누구나 인터넷 신어에 대해 쉽게 이해할 수 있도록 개발된 서비스입니다.
-                마지막으로, 이달의 KINT를 통해 인터넷 신어 트랜드를 한눈에 확인하세요!</p>
+                    KINT Search는 KINT Open API의 Model들을 통해 도출된 다양한 분석 결과를 시각화하여 보여줍니다.
+                    예문을 통해 인터넷 신어들이 어떤 문맥에서 쓰는지 파악하고
+                    감성분석 결과를 통해 해당 검색어가 문맥에서 얼마나 긍정적, 부정적으로 쓰였는지 확인할 수 있습니다.
+                    시계열 분석을 통해 시간별 빈도 분석 결과와 분야열 사용 비율을 그래프로 시각화하여 해당 단어가 어떤 분야에서 주로 쓰이고 언제부터 쓰였는지 쉽게 알 수 있습니다.
+                    또한 해당 검색어와 관련된 연관 키워드를 최대 5개까지 제공합니다.
+                    KINT Search는 KINT API를 사용하지 않아도 누구나 인터넷 신어에 대해 쉽게 이해할 수 있도록 개발된 웹 기반 서비스입니다.
+                    마지막으로, 이달의 KINT를 통해 인터넷 신어 트렌드를 한눈에 확인하세요!
+                </p>
 
             </div>
             <footer class="major">
