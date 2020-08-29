@@ -61,7 +61,7 @@
                         <span>연관 키워드</span>
                         {%  for r in rel_term %} <!-- 집가서 꼭하기 -->
                             <!-- <input type="hidden" name="mon{{ r }}" value="{{ r }}"> -->
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ r }}>
+                            <input class="mon_bnt" type="submit" name="mon" value=#{{ r }}>
                         {%  endfor %}
                     </div>
                 </form>
@@ -80,9 +80,10 @@
                 <div class="left_result" id="example_result" style="float: left; width: 65%">
                     <div style="width: 95%">
                         <span class="chart__title">Example Sentence</span>
+                        <p class="chart__desc">신어가 사용되는 예시를 보여줍니다.</p>
                         <!--Positive & Negative index-->
                         <div style="float: left;position: relative;">
-                            <p class="result_p">{{ sens[0] }}</p>
+                            <p class="result_p">{{ sentence }}</p>
                         </div>
                     </div>
                 </div>
@@ -92,26 +93,27 @@
                     <div class="charts">
                         <div class="chart chart--dev">
                             <span class="chart__title">Sentiment Analysis</span>
+                            <p class="chart__desc">신어가 긍정/부정적으로 사용된 비율을 나타낸 그래프입니다.</p>
                             <!--Positive & Negative index-->
                             <div style="float: left;position: relative;">
                                 <ul style=" list-style: none; padding-left: 0px;">
                                     <li style="padding-left: 0px;height: 30px; margin-bottom: 10px">
                                         <span class="result_span">Positive</span>
-                                        <!--<span class="result_span" style="float: right">&nbsp;&nbsp;&nbsp;{{ sens[1] }}</span>-->
+                                        <!--<span class="result_span" style="float: right">&nbsp;&nbsp;&nbsp;{{ sent1 }}</span>-->
                                     </li>
                                     <li style="padding-left: 0px;height: 30px; margin-bottom: 10px">
                                         <span class="result_span">Negative</span>
-                                        <!--<span class="result_span" style="float: right">&nbsp;&nbsp;&nbsp;{{ sens[2] }}</span>-->
+                                        <!--<span class="result_span" style="float: right">&nbsp;&nbsp;&nbsp;{{ sent2 }}</span>-->
                                     </li>
                                 </ul>
                             </div>
                             <!--Positive & Negative graph-->
                             <ul class="chart--horiz">
-                                <li class="chart__bar_pos" style="width: {{ sens[1] }}; list-style: none">
-                                    <span class="chart__label">{{ sens[1] }}</span>
+                                <li class="chart__bar_pos" style="width: {{ sent1 }}; list-style: none">
+                                    <span class="chart__label">{{ sent1 }}</span>
                                 </li>
-                                <li class="chart__bar_neg" style="width: {{ sens[2] }}; list-style: none">
-                                    <span class="chart__label">{{ sens[2] }}</span>
+                                <li class="chart__bar_neg" style="width: {{ sent2 }}; list-style: none">
+                                    <span class="chart__label">{{ sent2 }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -127,7 +129,7 @@
                 <div class="left_result" id="freq_rate_result" style="float: left; width: 65%">
 
                     <span class="chart__title">Frequency Analysis</span>
-
+                    <p class="chart__desc">최근 1년간 사용된 빈도수를 나타낸 그래프입니다.</p>
                     <!--Positive & Negative index-->
                     <div style="width:90%; position: relative">
                         <canvas id="canvas"></canvas>
@@ -193,6 +195,7 @@
                 <!--Amudomolla graph-->
                 <div class="right_result" id="Amudomolla_result" style="float: left; width: 35%">
                     <span class="chart__title">Percentage by Community</span>
+                    <p class="chart__desc">커뮤니티, 뉴스별 사용 비율을 나타낸 그래프입니다.</p>
                     <!--Positive & Negative index-->
                     <div style="width:95%; position: relative;">
                         <canvas id="radar-chart" width="80%" height="80%"></canvas>
@@ -212,8 +215,8 @@
                                         fill: true,
                                         backgroundColor: "rgba(247,211,59,0.5)",
                                         borderColor: "rgb(247,211,59)",
-                                        pointBorderColor: "#fff",
-                                        pointBackgroundColor: "rgba(179,181,198,1)"
+                                        pointBorderColor: "#f7d33b",
+                                        pointBackgroundColor: "rgb(247,211,59)"
                                     }
                                 ]
                             },
@@ -226,7 +229,7 @@
                                 },
                                 legend: {
                                     labels: {
-                                      fontSize: 25
+                                        fontSize: 20,
                                     },
                                     display: false,
                                     position: 'right'
@@ -238,6 +241,16 @@
                                 layout: {
                                     position: 'left'
                                 },
+                                scale: {
+                                    ticks: {
+                                        backdropColor: "rgba(222,222,222,0)",
+                                        fontSize: 12,
+                                    },
+                                    pointLabels :{
+                                        fontSize: 14,
+                                        fontStyle: "bold",
+                                    }
+                                }
                             }
                         });
                     </script>
