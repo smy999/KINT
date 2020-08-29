@@ -21,13 +21,13 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-
     <!--chart.js Line graph CDN-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <!-- Google font: Gothic A1, font-family: 'Gothic A1', sans-serif;-->
+    <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body class="is-preload">
+<body class="is-preload" style="background-color: #F7F0ED">
 
 
 <!-- Nav -->
@@ -66,20 +66,10 @@
 
                     <div class="search_sub" id="keyword" style="margin: 0 auto">
                         <span>이달의 KINT</span>
-                        <input type="hidden" name="mon0" value="{{ month_term[0] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ month_term[0] }}>
-
-                        <input type="hidden" name="mon1" value="{{ month_term[1] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ month_term[1] }}>
-
-                        <input type="hidden" name="mon2" value="{{ month_term[2] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ month_term[2] }}>
-
-                        <input type="hidden" name="mon3" value="{{ month_term[3] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ month_term[3] }}>
-
-                        <input type="hidden" name="mon4" value="{{ month_term[4] }}">
-                        <input class="mon_bnt" type="submit" name="mon" value=#{{ month_term[4] }}>
+                        {%  for m in month_term %} <!-- 집가서 꼭하기 -->
+                            <input type="hidden" name="mon0" value="{{ m }}">
+                            <input class="mon_bnt" type="submit" name="mon" value=#{{ m }}>
+                        {%  endfor %}
                     </div>
                 </form>
             </div>
@@ -87,10 +77,11 @@
 
         </section>
 
+        <!-- 사용자가 검색어를 입력하거나 연관 검색어, 이달의 KINT를 눌렀으나 해당 용어가 신어 DB에 존재하지 않을 때 -->
         <section id="result_sec">
-            <div id="main" style="width: 100%; position: relative;">
+            <div id="main" style="width: 100%; position: relative; background: none">
                 {% if result == "no" %}
-                    <p style="text-align: center; font-size: 1em">"{{ term }}"에 대한 검색 결과가 없습니다.</p>
+                    <p style="text-align: center; font-size: 1em; font-weight: 500">"{{ term }}"에 대한 검색 결과가 없습니다.</p>
                 {% endif %}
             </div>
         </section>
