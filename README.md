@@ -50,7 +50,7 @@
 	- 종속변수: 신어 여부
 	- 독립변수
 	![Independent Variable](https://user-images.githubusercontent.com/68207910/91655727-cfa3f900-eaed-11ea-8525-9e64320431bd.png)
-
+	
 	- 위 종속변수, 독립변수를 학습된 분류 모델에 넣어 신어 여부 파악합니다.  
 
 4. 1,2,3 단계를 반복적으로 적용합니다.  
