@@ -439,8 +439,59 @@ month_term = list(finalM[1].head(5))
 
 ################################# 비율 분석 #############################################
 
+# 오늘의유머베스트오브베스트 : 1
+# 오늘의유머베스트게시판 : 2
+#
+# 일베일간베스트 : 3
+# 일베정치/시사 : 201
+#
+# 디시인사이드야구갤러리 : 4
+# 디시인사이드인터넷방송갤러리 : 100
+# 디시인사이드남자연예인갤러리 : 101
+# 디시인사이드여자연예인갤러리 : 102
+#
+# 뽐뿌_자유게시판 : 5
+#
+# 네이트판_10대게시판 : 6
+# 네이트판20대게시판 :7
+# 네이트판톡커들의선택 : 8
+#
+# 인스티즈이슈 : 103
+#
+# 보배드림정치 : 200
+
+wordR2 = pd.read_excel('word2_ref.xlsx')
+wordR4 = pd.read_excel('word4_ref.xlsx')
+wordR = pd.concat([wordR2, wordR4])
+print(wordR)
+
+wordR.columns = ["word","d1", "d2", "i1", "p1", "t2", "d3", "n3", "n1", "n2", "t1", "b1", "i2"]
+print(wordR)
+
+wordR = wordR.fillna(0)
+print(wordR)
+
+wordR = wordR.rename({'Unnamed: 0': "word"}, axis=1)
+
+wordR = wordR.sort_values(by='word', axis=0, ascending=True)
+print(wordR)
+
+wordRR = pd
+# wordRR['word'] = wordR.apply(lambda x: x.word, axis='columns')
+wordR['오늘의유머'] = wordR.apply(lambda x:x.t1+x.t2, axis='columns')
+wordR['일간베스트'] = wordR.apply(lambda x:x.i1+x.i2, axis='columns')
+wordR['디시인사이드'] = wordR.apply(lambda x:x.d1+x.d2+x.d3, axis='columns')
+wordR['뽐뿌'] = wordR["p1"]
+wordR['네이트판'] = wordR.apply(lambda x:x.n1+x.n2+x.n3, axis='columns')
+wordR['보배드림'] = wordR["b1"]
+print(wordR)
+
+wordR.drop( ["word","d1", "d2", "i1", "p1", "t2", "d3", "n3", "n1", "n2", "t1", "b1", "i2"], axis='columns', inplace=True)
+print(wordR)
+
 # 비율 엑셀 파일 불러오기
 ref_pd = pd.read_excel('News_ref.xlsx')
+print(ref_pd)
 
 # 신어 개수
 refLen = len(ref_pd)
