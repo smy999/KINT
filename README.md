@@ -48,20 +48,8 @@
 
 3. 신어 감지 단계
 	- 종속변수: 신어 여부
-	- 독립변수
-
-		|독립변수|설명|
-		|:---|:---|
-		|left_frequency|용어가 어절의 왼쪽 부분에 등장한 횟수|
-		|right_frequency|용어가 어절의 오른쪽 부분에 등장한 횟수|
-		|cohesion_forward|어절의 왼쪽에서부터 용어가 함께 등장하는 정도|
-		|cohesion_backward|어절의 오른쪽에서부터 용어가 함께 등장하는 정도|
-		|left_accessor_variety|용어의 왼쪽에 등장하는 글자들의 종류|
-		|right_accessor_variety|용어의 오른쪽에 등장하는 글자들의 종류|
-		|left_branching_entropy|용어의 왼쪽에 등장하는 글자의 불확실성|
-		|right_branching_entropy|용어의 오른에 등장하는 글자의 불확실성|
-		|right_post_postion_ratio|용어의 오른쪽에 조사가 있을 비율|
-		|right_whitespace_ratio|용어의 오른쪽에 공백이 있을 비율|
+	- 독립변수!
+	[Independent Variable](https://user-images.githubusercontent.com/68207910/91655727-cfa3f900-eaed-11ea-8525-9e64320431bd.png)
 
 	- 위 종속변수, 독립변수를 학습된 분류 모델에 넣어 신어 여부 파악합니다.  
 
@@ -137,7 +125,7 @@ For this, the 1st Model detects new internet terms, and the 2nd Model extracts s
 3. New internet word detecting step
   - Dependent Variable: Whether it is a new internet term
 	- Independent Variable
-	![Independent Variable](https://user-images.githubusercontent.com/68207910/91655549-640d5c00-eaec-11ea-8eb0-d6c7a76c16eb.png)
+	![Independent Variable](https://user-images.githubusercontent.com/68207910/91655728-d2065300-eaed-11ea-8a38-7bb352dcf772.png)
 		
   - Put the above dependent and independent variables into the learned classification model to determine whether it is a new internet term or not  
 
