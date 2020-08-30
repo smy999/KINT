@@ -125,7 +125,7 @@ For this, the 1st Model detects new internet terms, and the 2nd Model extracts s
 3. New internet word detecting step
   - Dependent Variable: Whether it is a new internet term
 	- Independent Variable
-	![Independent Variable](https://user-images.githubusercontent.com/68207910/91655728-d2065300-eaed-11ea-8a38-7bb352dcf772.png)
+		![Independent Variable](https://user-images.githubusercontent.com/68207910/91655728-d2065300-eaed-11ea-8a38-7bb352dcf772.png)
 		
   - Put the above dependent and independent variables into the learned classification model to determine whether it is a new internet term or not  
 
