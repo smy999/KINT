@@ -499,22 +499,102 @@ refLen = len(ref_pd)
 # NaN 값 0으로 변환
 ref_pd = ref_pd.fillna(0)
 
+ref_pd = ref_pd.rename({'Unnamed: 0': 0}, axis=1)
+print(ref_pd)
+
 # column(년월) 순 정렬
 ref_pd = ref_pd.sort_index(axis=1)
+print(ref_pd)
 
-# 한겨레 : 300, 경향신문 : 301, 매일경제 : 302, 조선일보 : 303, 디지털타임스 : 304, 동아일보 : 305, SBS뉴스 : 306, 한국경제 : 307
-labelRef = ["한겨레", "경향신문", "매일경제", "조선일보", "디지털타임스", "동아일보", "SBS뉴스", "한국경제"]
 
-# 함수: 해당 검색어에 대한 정보 추출
+ref_pd['한겨레'] = ref_pd[300]
+ref_pd['경향신문'] = ref_pd[301]
+ref_pd['매일경제'] = ref_pd[302]
+ref_pd['조선일보'] = ref_pd[303]
+ref_pd['디지털타임스'] = ref_pd[304]
+ref_pd['동아일보'] = ref_pd[305]
+ref_pd['SBS뉴스'] = ref_pd[306]
+print(ref_pd)
+
+ref_pd.drop( [300, 301, 302, 303, 304, 305, 306], axis='columns', inplace=True)
+print(ref_pd)
+
+ref_pd['뉴스'] = ref_pd.apply(lambda x: x.한겨레 + x.경향신문 + x.매일경제 + x.조선일보 + x.디지털타임스 + x.동아일보 + x.SBS뉴스, axis='columns')
+print(ref_pd)
+
+
+
+# # 함수: 해당 검색어에 대한 정보 추출
+# def ref_func(term):
+#     global dataRef
+#     dataRef = list()
+#     for i in range(refLen):
+#         if term == ref_pd[0][i]:
+#             for j in range(300, 307):
+#                 dataRef.append(ref_pd[j][i]*100)
+#             break
+#     return dataRef
+
+flagN = 0
+flagC = 0
+dataRef = list()
+labelRef = list()
+
+
+
 def ref_func(term):
+    global flagN, flagC
     global dataRef
-    dataRef = list()
-    for i in range(refLen):
-        if term == ref_pd[0][i]:
-            for j in range(300, 307):
-                dataRef.append(ref_pd[j][i]*100)
-            break
-    return dataRef
+    global labelRef
+
+    print(ref_pd[0])
+    for news_i in range(len(ref_pd.iloc[0])):
+        if term == ref_pd[0][news_i]:
+            flagN = 1
+            print(flagN)
+
+    for cumm_i in range(len(wordR.iloc[0])):
+        if term == wordR.iloc[0][cumm_i]:
+            flagC = 1
+            print(flagC)
+
+    if flagN+flagC == 2:
+        labelRef = wordR.columns.tolist()
+        print(labelRef)
+        print(len(labelRef))
+
+        for j in range(len(labelRef)-1):
+            labelRef.append(wordR.loc[labelRef[j]][cumm_i])
+            sum +=labelRef[j]
+
+        labelRef.append(ref_pd['뉴스'][news_i])
+        sum+=labelRef[j]
+
+
+    else:
+        if flagN == 1:
+            # 한겨레 : 300, 경향신문 : 301, 매일경제 : 302, 조선일보 : 303, 디지털타임스 : 304, 동아일보 : 305, SBS뉴스 : 306, 한국경제 : 307
+            labelRef = ref_pd.columns.tolist()
+            print(len(labelRef))
+            del labelDate[8]
+            refLen = labelDate
+
+            for i in range(refLen):
+                if term == ref_pd[0][i]:
+                    for j in range(300, 307):
+                        dataRef.append(ref_pd[j][i] * 100)
+                    break
+            return dataRef
+
+        else:
+            labelRef = wordR.columns.tolist()
+
+
+
+
+
+ref_func(term="가성비")
+
 
 ################################### 메인 페이지 ####################################################
 
