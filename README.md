@@ -147,8 +147,7 @@ For this, the 1st Model detects new internet terms, and the 2nd Model extracts s
 
 
                                                                                                               
------------------------------------------------------
-
+-----------------------------------------------------ㅇ
                                                                                   
 # API
 
