@@ -109,38 +109,185 @@ def exam_func(term):
 
 
 ############################### 연관 키워드 #############################################
-
+print("############################### 연관 키워드 #############################################")
 # 연관 키워드 엑셀 파일 불러오기
-key_pd = pd.read_excel('key_final.xlsx')
+newsK = pd.read_excel('News_key.xlsx')
+commK = pd.read_excel('key.xlsx')
+key_pd = pd
+key_pd = pd.concat([newsK, commK])
+print(key_pd)
 
 # 신어 개수(= row 수)
 key_Len = len(key_pd)
+print(key_Len)
 
+key_pd = key_pd.rename({'Unnamed: 0': 'word'}, axis=1)
+print(key_pd)
+
+key_pd = key_pd.sort_values(by='word', axis=0, ascending=True)
+print(key_pd)
+key_pd = key_pd.reset_index(drop=True)
+print(key_pd)
 # 편의를 위해 row와 column 뒤집기
-key_pd = key_pd.transpose()
+# key_pd = key_pd.transpose()
+# print(key_pd)
 
 # Nan 값 오류를 방지하기 위해 0으로 값 변경
 key_pd = key_pd.fillna(0)
+print(key_pd)
 
 # 함수: 해당 검색어에 대한 정보 추출
-def rel_func(term):
-    global rel_term
-    global varbreak
-    rel_term = list()
-    varbreak = 0
-    for i in range(key_Len):
-        if term == key_pd[i]['key']:
-            varbreak = 0
-            keyLen = len(key_pd[i])
-            for j in range(0, keyLen - 1):
-                if key_pd[i][j] == 0:
-                    continue
-                value = tuple(key_pd[i][j].split("'"))
-                rel_term.append(value[1])
-            break
-        else:
-            varbreak = 1
-    return rel_term
+
+rel_term = list()
+
+tempK = key_pd[key_pd['word'].duplicated()]
+print(tempK)
+for i in range(key_Len):
+
+
+    rel_dict = dict()
+    global keyLen1
+
+    if i+1 in tempK.index:
+        continue
+    if i in tempK.index:
+        tempKK = list()
+
+        # 중복 키워드 받아오기
+        tempKK.append(key_pd.loc[i]['word'])
+        print(tempKK)
+
+        keyLen1 = len(key_pd.iloc[i])
+        print(keyLen1)
+
+        for j in range(keyLen1 - 1):
+            if key_pd.loc[i][j] == 0:
+                continue
+            value = tuple(key_pd.loc[i][j].split("'"))
+            value2 = tuple(value[2].split(","))
+            value2 = tuple(value2[1].split(")"))
+            value2 = tuple(value2[0].split(" "))
+
+            rel_dict[value[1]] = value2[1]
+        print(rel_dict)
+
+        keyLen2 = len(key_pd.iloc[i-1])
+        print(keyLen2)
+        for j in range(keyLen2 - 1):
+            if key_pd.loc[i-1][j] == 0:
+                continue
+            value = tuple(key_pd.loc[i-1][j].split("'"))
+            value2 = tuple(value[2].split(","))
+            value2 = tuple(value2[1].split(")"))
+            value2 = tuple(value2[0].split(" "))
+
+            rel_dict[value[1]]= value2[1]
+        print(rel_dict)
+        rel_list=list()
+        rel_list = sorted(rel_dict.items(), key = lambda x:x[1], reverse=True)
+        print(rel_list)
+
+        print(tempKK)
+        for k in range(keyLen1+keyLen2):
+            tempKK.append(rel_list[k][0])
+            if k == 4:
+                break
+        print(tempKK)
+        print()
+        key_pd.drop(i, inplace=True)
+        key_pd.drop(i - 1, inplace=True)
+
+        # 중복 검색어 빈도합 추가
+        key_pd.loc[i] = tempKK
+        print(key_pd)
+
+
+
+        # # 중복 키워드의 연관어 뽑아서 정렬하기
+        # for j in labelD:
+        #     tempKK.append(key_pd.loc[i][j] + key_pd.loc[i - 1][j])
+        # # print(tempDD)
+        #
+        # # 기존 데이터 삭제
+        # key_pd.drop(i, inplace=True)
+        # key_pd.drop(i - 1, inplace=True)
+        #
+        # # 중복 검색어 빈도합 추가
+        # key_pd.loc[i] = tempKK
+        # # print(finalD)
+
+    else:
+        tempKK = list()
+
+        # 중복 키워드 받아오기
+        tempKK.append(key_pd.loc[i]['word'])
+        print(tempKK)
+
+        keyLen1 = len(key_pd.iloc[i])
+        print(keyLen1)
+
+        for j in range(keyLen1 - 1):
+            if key_pd.loc[i][j] == 0:
+                continue
+            value = tuple(key_pd.loc[i][j].split("'"))
+            value2 = tuple(value[2].split(","))
+            value2 = tuple(value2[1].split(")"))
+            value2 = tuple(value2[0].split(" "))
+
+            tempKK.append(value[1])
+        print(tempKK)
+        key_pd.drop(i, inplace=True)
+        key_pd.loc[i] = tempKK
+        print(key_pd)
+
+
+
+
+#     rel_term = list()
+#     for j in range(keyLen-1):
+#         if key_pd.loc[i][j] == 0:
+#             continue
+#     value = tuple(key_pd.loc[i][j].split("'"))
+#     value2 = tuple(value[2].split(","))
+#     value2 = tuple(value2[1].split(")"))
+#     value2 = tuple(value2[0].split(" "))
+#
+#     rel_term.append([value[1], value2[1]])
+# print(rel_term)
+# key_pd.iloc[i] = rel_term
+# print(key_pd)
+
+# 중복 검색어 빈도합 추가
+#     key_pd.loc[i]=key_pd
+
+
+
+
+
+
+
+
+
+# # 함수: 해당 검색어에 대한 정보 추출
+# def rel_func(term):
+#     global rel_term
+#     global varbreak
+#     rel_term = list()
+#     varbreak = 0
+#     for i in range(key_Len):
+#         if term == key_pd[i]['word']:
+#             varbreak = 0
+#             keyLen = len(key_pd[i])
+#             for j in range(0, keyLen - 1):
+#                 if key_pd[i][j] == 0:
+#                     continue
+#                 value = tuple(key_pd[i][j].split("'"))
+#                 print(value)
+#                 rel_term.append(value[1])
+#             break
+#         else:
+#             varbreak = 1
+#     return rel_term
 
 ################################# 빈도 분석 #############################################
 
@@ -165,17 +312,17 @@ print("finalM")
 
 print(finalD["Unnamed: 0"])
 finalD = finalD.rename({'Unnamed: 0': '0'}, axis=1)
-print(finalD)
+# print(finalD)
 
 finalD = finalD.fillna(0)
-print(finalD)
+# print(finalD)
 
 labelD = list(finalD.columns)
 labelD = sorted(labelD)
-print(labelD)
+# print(labelD)
 
 finalD = finalD[labelD]
-print(finalD)
+# print(finalD)
 
 # finalD = finalD.rename({'0': 'key'}, axis=1)
 # print(finalD)
@@ -197,21 +344,19 @@ print(finalD)
 
 # 중족 데이터 받아오기
 tempD = finalD[finalD['0'].duplicated()]
-print(tempD)
-print(tempD['0'])
-
-print(finalD.loc[4])
-print(finalD.loc[4][labelD[2]])
+# print(tempD)
+# print(tempD['0'])
 
 for i in tempD.index:
     tempDD = list()
 
     # 중복 키워드 받아오기
     tempDD.append(finalD.loc[i]['0'])
+    # print(tempDD)
     # 중복 빈도수 더하기
     for j in labelD:
         tempDD.append(finalD.loc[i][j]+finalD.loc[i-1][j])
-    print(tempDD)
+    # print(tempDD)
 
     # 기존 데이터 삭제
     finalD.drop(i, inplace=True)
@@ -219,34 +364,38 @@ for i in tempD.index:
 
     # 중복 검색어 빈도합 추가
     finalD.loc[i]=tempDD
-    print(finalD)
+    # print(finalD)
 
 
 #------------------------------------------
-
+date_pd = pd
 date_pd = finalD
 
 # 신어 개수
 dateLen = len(date_pd)
 
 # NaN 값 0으로 변환
-date_pd = date_pd.fillna(0)
+# date_pd = date_pd.fillna(0)
 
 # 날짜 순으로 정렬
-date_pd = date_pd.sort_index(axis=1)
+# date_pd = date_pd.sort_index(axis=1)
 
 # 컬럼(커뮤니티, 신문사, key) 가져와서 key 빼고 저장: 그래프 labels에 쓰일 데이터
 labelDate = list(date_pd.columns)
-del labelDate[13]
+del labelDate[0]
 
 
 def date_func(term):
     global dataDate
     dataDate = list()
+    print(date_pd)
     for i in range(dateLen):
-        if term == date_pd['key'][i]:
-            dataDate = list(date_pd.loc[i])
-            del dataDate[13]
+        print('for')
+        # print(date_pd['0'][i])
+        if term == date_pd.iloc[i]['0']:
+            dataDate = list(date_pd.iloc[i])
+            print(dataDate)
+            del dataDate[0]
             break
     return dataDate
 
@@ -264,20 +413,20 @@ def date_func(term):
 
 
 newsM = pd.read_excel("News_month.xlsx")
-print("newsM")
-print(newsM)
+# print("newsM")
+# print(newsM)
 
 word2 = pd.read_excel("word2_month.xlsx")
-print("word2")
-print(word2)
+# print("word2")
+# print(word2)
 
 word4 = pd.read_excel("word4_month.xlsx")
-print("word4")
-print(word4)
+# print("word4")
+# print(word4)
 
 finalM = pd.concat([newsM, newsM, word2, word4])
-print("finalM")
-print(finalM["Unnamed: 0"])
+# print("finalM")
+# print(finalM["Unnamed: 0"])
 finalM = finalM.rename({'Unnamed: 0': 1}, axis=1)
 print(finalM)
 
@@ -311,7 +460,7 @@ for i in tempM.index:
     # 중복 빈도수 더하기
     for j in labelM:
         tempMM.append(finalM.loc[i][j]+finalM.loc[i-1][j])
-    print(tempMM)
+    # print(tempMM)
 
     # 기존 데이터 삭제
     finalM.drop(i, inplace=True)
@@ -319,14 +468,14 @@ for i in tempM.index:
 
     # 중복 검색어 빈도합 추가
     finalM.loc[i]=tempMM
-    print(finalM)
+    # print(finalM)
 
 # 내림차순 정렬
 finalM = finalM.sort_values(by=0, axis=0, ascending=False)
-print(finalM)
+# print(finalM)
 # top5 추출
 month_term = list(finalM[1].head(5))
-print(month_term)
+# print(month_term)
 
 ################################# 비율 분석 #############################################
 
@@ -436,10 +585,11 @@ def search():
                     sens = sent_func(term)
                     # 빈도 분석 결과 받아오기
                     dataRef = ref_func(term)
-                    # 커뮤니티, 뉴스별 비율 받아오기
-                    dataDate = date_func(term)
                     # 예문 받아오기
                     sentence = exam_func(term)
+                    # 커뮤니티, 뉴스별 비율 받아오기
+                    dataDate = date_func(term)
+
                     # search.html: 검색 결과 보여주기
                     return render_template('search.html', sent1=sens[0], sent2=sens[1], sentence=sentence,
                                            term=term, rel_term=rel_term, labelRef=labelRef, labelDate=labelDate,
@@ -466,10 +616,11 @@ def search():
             sens = sent_func(term)
             # 빈도 분석 결과 받아오기
             dataRef = ref_func(term)
-            # 커뮤니티, 뉴스별 비율 받아오기
-            dataDate = date_func(term)
             # 예문 받아오기
             sentence = exam_func(term)
+            # 커뮤니티, 뉴스별 비율 받아오기
+            dataDate = date_func(term)
+
             # search.html: 검색 결과 보여주기
             return render_template('search.html', sent1=sens[0], sent2=sens[1], sentence=sentence,
                                    term=term, rel_term=rel_term, labelRef=labelRef, labelDate=labelDate,
