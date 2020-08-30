@@ -137,20 +137,7 @@ For this, the 1st Model detects new internet terms, and the 2nd Model extracts s
 3. New internet word detecting step
   - Dependent Variable: Whether it is a new internet term
 	- Independent Variable
-	
-		|Independent Variable|Description|
-		|:---|:---|
-		|left_frequency|The number of times the term appears in the left part of the word|
-		|right_frequency|The number of times the term appears in the right part of the word|
-		|cohesion_forward|The degree to which terms appear together from the left side of the word|
-		|cohesion_backward|The degree to which terms appear together from the right side of the word|
-		|left_accessor_variety|Types of letters appearing on the left side of the term|
-		|right_accessor_variety|Types of letters appearing on the right side of the term|
-		|left_branching_entropy|Uncertainty in the letters to the left of the term|
-		|right_branching_entropy|Uncertainty in the letters to the right of the term|
-		|right_post_postion_ratio|Percentage of surveys to the right of the term|
-		|right_whitespace_ratio|Percentage of spaces to the right of the term|
-
+	![Independent Variable](https://user-images.githubusercontent.com/68207910/91655549-640d5c00-eaec-11ea-8eb0-d6c7a76c16eb.png)
 		
   - Put the above dependent and independent variables into the learned classification model to determine whether it is a new internet term or not  
 
