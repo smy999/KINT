@@ -145,8 +145,86 @@ def rel_func(term):
 ################################# 빈도 분석 #############################################
 
 # 빈도 엑셀 파일 불러오기
-date_pd = pd.read_excel('News_date.xlsx')
-print(date_pd)
+# date_pd = pd.read_excel('News_date.xlsx')
+# print(date_pd)
+
+newsD = pd.read_excel("News_date.xlsx")
+print("newsD")
+print(newsD)
+
+wordD2 = pd.read_excel("word2_date.xlsx")
+print("wordD2")
+print(wordD2)
+
+wordD4 = pd.read_excel("word4_date.xlsx")
+# print("wordD4")
+# print(wordD4)
+
+finalD = pd.concat([newsD, newsD, wordD2, wordD4])
+print("finalM")
+
+print(finalD["Unnamed: 0"])
+finalD = finalD.rename({'Unnamed: 0': '0'}, axis=1)
+print(finalD)
+
+finalD = finalD.fillna(0)
+print(finalD)
+
+labelD = list(finalD.columns)
+labelD = sorted(labelD)
+print(labelD)
+
+finalD = finalD[labelD]
+print(finalD)
+
+# finalD = finalD.rename({'0': 'key'}, axis=1)
+# print(finalD)
+
+
+del labelD[0]
+print(labelD)
+print(len(labelD))
+
+
+# finalD.sort_values(by='word', ascending=True)
+print("합치고 정렬")
+finalD = finalD.sort_values(by='0', axis=0, ascending=True)
+print(finalD)
+
+finalD = finalD.reset_index(drop=True)
+print(finalD)
+
+
+# 중족 데이터 받아오기
+tempD = finalD[finalD['0'].duplicated()]
+print(tempD)
+print(tempD['0'])
+
+print(finalD.loc[4])
+print(finalD.loc[4][labelD[2]])
+
+for i in tempD.index:
+    tempDD = list()
+
+    # 중복 키워드 받아오기
+    tempDD.append(finalD.loc[i]['0'])
+    # 중복 빈도수 더하기
+    for j in labelD:
+        tempDD.append(finalD.loc[i][j]+finalD.loc[i-1][j])
+    print(tempDD)
+
+    # 기존 데이터 삭제
+    finalD.drop(i, inplace=True)
+    finalD.drop(i-1, inplace=True)
+
+    # 중복 검색어 빈도합 추가
+    finalD.loc[i]=tempDD
+    print(finalD)
+
+
+#------------------------------------------
+
+date_pd = finalD
 
 # 신어 개수
 dateLen = len(date_pd)
@@ -161,7 +239,7 @@ date_pd = date_pd.sort_index(axis=1)
 labelDate = list(date_pd.columns)
 del labelDate[13]
 
-# 함수: 해당 검색어에 대한 정보 추출
+
 def date_func(term):
     global dataDate
     dataDate = list()
@@ -175,14 +253,80 @@ def date_func(term):
 ################################# 이달의 KINT #############################################
 
 # 빈도 분석 파일에서 key와 마지막 달 column 가져와서 this_month에 저장
-this_month = date_pd[['key', labelDate[-1]]]
-print(this_month)
+# this_month = finalD[['0', labelDate[-1]]]
+# print(this_month)
 
 # 마지막 달 컬럼 기준이로 내리차순 정렬 > top5 추출
-this_month = this_month.sort_values(by=[labelDate[-1]], ascending=[False])
+# this_month = this_month.sort_values(by=[labelDate[-1]], ascending=[False])
 
 # 해당 검색어에 대한 정보 추출
-month_term = list(this_month['key'].head(5))
+# month_term = list(this_month['0'].head(5))
+
+
+newsM = pd.read_excel("News_month.xlsx")
+print("newsM")
+print(newsM)
+
+word2 = pd.read_excel("word2_month.xlsx")
+print("word2")
+print(word2)
+
+word4 = pd.read_excel("word4_month.xlsx")
+print("word4")
+print(word4)
+
+finalM = pd.concat([newsM, newsM, word2, word4])
+print("finalM")
+print(finalM["Unnamed: 0"])
+finalM = finalM.rename({'Unnamed: 0': 1}, axis=1)
+print(finalM)
+
+labelM = list(finalM.columns)
+print(labelM)
+del labelM[0]
+
+finalM = finalM.fillna(0)
+print(finalM)
+
+# 여기에 이달의 신조어 중복되는 것들 그냥 값만 더하면 된다.
+print("합치고 정렬")
+finalM = finalM.sort_values(by=1, axis=0, ascending=True)
+print(finalM)
+
+finalM = finalM.reset_index(drop=True)
+print(finalM)
+
+
+# 중족 데이터 받아오기
+tempM = finalM[finalM[1].duplicated()]
+print(tempM)
+print(tempM[1])
+
+
+for i in tempM.index:
+    tempMM = list()
+
+    # 중복 키워드 받아오기
+    tempMM.append(finalM.loc[i][1])
+    # 중복 빈도수 더하기
+    for j in labelM:
+        tempMM.append(finalM.loc[i][j]+finalM.loc[i-1][j])
+    print(tempMM)
+
+    # 기존 데이터 삭제
+    finalM.drop(i, inplace=True)
+    finalM.drop(i-1, inplace=True)
+
+    # 중복 검색어 빈도합 추가
+    finalM.loc[i]=tempMM
+    print(finalM)
+
+# 내림차순 정렬
+finalM = finalM.sort_values(by=0, axis=0, ascending=False)
+print(finalM)
+# top5 추출
+month_term = list(finalM[1].head(5))
+print(month_term)
 
 ################################# 비율 분석 #############################################
 
@@ -328,7 +472,8 @@ def search():
             sentence = exam_func(term)
             # search.html: 검색 결과 보여주기
             return render_template('search.html', sent1=sens[0], sent2=sens[1], sentence=sentence,
-                                   term=term, rel_term=rel_term, labelRef=labelRef, labelDate = labelDate, dateDate = dataDate, dataRef = dataRef)
+                                   term=term, rel_term=rel_term, labelRef=labelRef, labelDate=labelDate,
+                                   dataDate=dataDate, dataRef=dataRef)
 
 
 
