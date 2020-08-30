@@ -142,11 +142,9 @@ rel_term = list()
 
 tempK = key_pd[key_pd['word'].duplicated()]
 print(tempK)
+
 for i in range(key_Len):
-
-
     rel_dict = dict()
-    global keyLen1
 
     if i+1 in tempK.index:
         continue
@@ -157,7 +155,7 @@ for i in range(key_Len):
         tempKK.append(key_pd.loc[i]['word'])
         print(tempKK)
 
-        keyLen1 = len(key_pd.iloc[i])
+        keyLen1 = len(key_pd.loc[i])
         print(keyLen1)
 
         for j in range(keyLen1 - 1):
@@ -171,7 +169,7 @@ for i in range(key_Len):
             rel_dict[value[1]] = value2[1]
         print(rel_dict)
 
-        keyLen2 = len(key_pd.iloc[i-1])
+        keyLen2 = len(key_pd.loc[i-1])
         print(keyLen2)
         for j in range(keyLen2 - 1):
             if key_pd.loc[i-1][j] == 0:
@@ -201,21 +199,6 @@ for i in range(key_Len):
         key_pd.loc[i] = tempKK
         print(key_pd)
 
-
-
-        # # 중복 키워드의 연관어 뽑아서 정렬하기
-        # for j in labelD:
-        #     tempKK.append(key_pd.loc[i][j] + key_pd.loc[i - 1][j])
-        # # print(tempDD)
-        #
-        # # 기존 데이터 삭제
-        # key_pd.drop(i, inplace=True)
-        # key_pd.drop(i - 1, inplace=True)
-        #
-        # # 중복 검색어 빈도합 추가
-        # key_pd.loc[i] = tempKK
-        # # print(finalD)
-
     else:
         tempKK = list()
 
@@ -223,11 +206,12 @@ for i in range(key_Len):
         tempKK.append(key_pd.loc[i]['word'])
         print(tempKK)
 
-        keyLen1 = len(key_pd.iloc[i])
-        print(keyLen1)
+        keyLen = len(key_pd.loc[i])
+        print(keyLen)
 
-        for j in range(keyLen1 - 1):
+        for j in range(keyLen-1):
             if key_pd.loc[i][j] == 0:
+                tempKK.append(0)
                 continue
             value = tuple(key_pd.loc[i][j].split("'"))
             value2 = tuple(value[2].split(","))
@@ -235,6 +219,8 @@ for i in range(key_Len):
             value2 = tuple(value2[0].split(" "))
 
             tempKK.append(value[1])
+            if j == 4:
+                break
         print(tempKK)
         key_pd.drop(i, inplace=True)
         key_pd.loc[i] = tempKK
@@ -242,52 +228,26 @@ for i in range(key_Len):
 
 
 
-
-#     rel_term = list()
-#     for j in range(keyLen-1):
-#         if key_pd.loc[i][j] == 0:
-#             continue
-#     value = tuple(key_pd.loc[i][j].split("'"))
-#     value2 = tuple(value[2].split(","))
-#     value2 = tuple(value2[1].split(")"))
-#     value2 = tuple(value2[0].split(" "))
-#
-#     rel_term.append([value[1], value2[1]])
-# print(rel_term)
-# key_pd.iloc[i] = rel_term
-# print(key_pd)
-
-# 중복 검색어 빈도합 추가
-#     key_pd.loc[i]=key_pd
-
-
-
-
-
-
-
-
-
-# # 함수: 해당 검색어에 대한 정보 추출
-# def rel_func(term):
-#     global rel_term
-#     global varbreak
-#     rel_term = list()
-#     varbreak = 0
-#     for i in range(key_Len):
-#         if term == key_pd[i]['word']:
-#             varbreak = 0
-#             keyLen = len(key_pd[i])
-#             for j in range(0, keyLen - 1):
-#                 if key_pd[i][j] == 0:
-#                     continue
-#                 value = tuple(key_pd[i][j].split("'"))
-#                 print(value)
-#                 rel_term.append(value[1])
-#             break
-#         else:
-#             varbreak = 1
-#     return rel_term
+# 함수: 해당 검색어에 대한 정보 추출
+def rel_func(term):
+    global rel_term
+    global varbreak
+    rel_term = list()
+    varbreak = 0
+    for i in range(key_Len):
+        if term == key_pd.iloc[i]['word']:
+            varbreak = 0
+            print(key_pd.iloc[i])
+            keyLen = len(key_pd.iloc[i])
+            for j in range(0, keyLen - 1):
+                if key_pd.loc[i][j] == 0:
+                    continue
+                rel_term.append(key_pd.iloc[i][j])
+            print(rel_term)
+            break
+        else:
+            varbreak = 1
+    return rel_term
 
 ################################# 빈도 분석 #############################################
 
