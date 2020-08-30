@@ -96,7 +96,7 @@ This project automatically detects new internet terms and updates this in our di
 For this, the 1st Model detects new internet terms, and the 2nd Model extracts sentiment analysis of them an example sentence of them.  
 
 # Progress   
-![system](https://user-images.githubusercontent.com/33407191/89900519-cf1aef80-dc1e-11ea-97ab-e201765e17ca.png)
+![system](https://user-images.githubusercontent.com/68207910/91655449-8652aa00-eaeb-11ea-8b4e-d28d9325c1b4.png)
 
 ## Model 1. New internet terms detection and automatic classification model  
 
