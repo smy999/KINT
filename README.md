@@ -22,7 +22,7 @@
 
 ## Model 1. 신어 감지 및 자동 분류 
 
-![model1](https://user-images.githubusercontent.com/33407191/89901561-39805f80-dc20-11ea-83c4-6b1b0418da7c.png)
+![model1](https://user-images.githubusercontent.com/68207910/91655468-ad10e080-eaeb-11ea-8f1d-514d88c721d8.png)
 
 1. 데이터 수집 단계
     - 분야별 커뮤니티에서 웹 크롤러를 통해 데이터를 수집합니다.
@@ -59,7 +59,7 @@
 
 ## Model 2. 신어 분석 모델
 
-![model2](https://user-images.githubusercontent.com/33407191/89973742-13000a00-dc9c-11ea-82ea-a83393ac534d.png)
+![model2](https://user-images.githubusercontent.com/68207910/91655472-aedaa400-eaeb-11ea-8aaf-fc6e6b351b05.png)
 
 1. 텍스트 데이터 불러오기
    - Model 1에서 감지된 신어가 포함된 텍스트 데이터를 불러옵니다.
