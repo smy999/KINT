@@ -109,18 +109,124 @@ def exam_func(term):
 
 
 ############################### 연관 키워드 #############################################
-
+print("############################### 연관 키워드 #############################################")
 # 연관 키워드 엑셀 파일 불러오기
-key_pd = pd.read_excel('key_final.xlsx')
+newsK = pd.read_excel('News_key.xlsx')
+commK = pd.read_excel('key.xlsx')
+key_pd = pd
+key_pd = pd.concat([newsK, commK])
+print(key_pd)
 
 # 신어 개수(= row 수)
 key_Len = len(key_pd)
+print(key_Len)
 
+key_pd = key_pd.rename({'Unnamed: 0': 'word'}, axis=1)
+print(key_pd)
+
+key_pd = key_pd.sort_values(by='word', axis=0, ascending=True)
+print(key_pd)
+key_pd = key_pd.reset_index(drop=True)
+print(key_pd)
 # 편의를 위해 row와 column 뒤집기
-key_pd = key_pd.transpose()
+# key_pd = key_pd.transpose()
+# print(key_pd)
 
 # Nan 값 오류를 방지하기 위해 0으로 값 변경
 key_pd = key_pd.fillna(0)
+print(key_pd)
+
+# 함수: 해당 검색어에 대한 정보 추출
+
+rel_term = list()
+
+tempK = key_pd[key_pd['word'].duplicated()]
+print(tempK)
+
+for i in range(key_Len):
+    rel_dict = dict()
+
+    if i+1 in tempK.index:
+        continue
+    if i in tempK.index:
+        tempKK = list()
+
+        # 중복 키워드 받아오기
+        tempKK.append(key_pd.loc[i]['word'])
+        # print(tempKK)
+
+        keyLen1 = len(key_pd.loc[i])
+        # print(keyLen1)
+
+        for j in range(keyLen1 - 1):
+            if key_pd.loc[i][j] == 0:
+                continue
+            value = tuple(key_pd.loc[i][j].split("'"))
+            value2 = tuple(value[2].split(","))
+            value2 = tuple(value2[1].split(")"))
+            value2 = tuple(value2[0].split(" "))
+
+            rel_dict[value[1]] = value2[1]
+        # print(rel_dict)
+
+        keyLen2 = len(key_pd.loc[i-1])
+        # print(keyLen2)
+        for j in range(keyLen2 - 1):
+            if key_pd.loc[i-1][j] == 0:
+                continue
+            value = tuple(key_pd.loc[i-1][j].split("'"))
+            value2 = tuple(value[2].split(","))
+            value2 = tuple(value2[1].split(")"))
+            value2 = tuple(value2[0].split(" "))
+
+            rel_dict[value[1]]= value2[1]
+        # print(rel_dict)
+        rel_list=list()
+        rel_list = sorted(rel_dict.items(), key = lambda x:x[1], reverse=True)
+        # print(rel_list)
+
+        # print(tempKK)
+        for k in range(keyLen1+keyLen2):
+            tempKK.append(rel_list[k][0])
+            if k == 4:
+                break
+        # print(tempKK)
+        # print()
+        key_pd.drop(i, inplace=True)
+        key_pd.drop(i - 1, inplace=True)
+
+        # 중복 검색어 빈도합 추가
+        key_pd.loc[i] = tempKK
+        # print(key_pd)
+
+    else:
+        tempKK = list()
+
+        # 중복 키워드 받아오기
+        tempKK.append(key_pd.loc[i]['word'])
+        # print(tempKK)
+
+        keyLen = len(key_pd.loc[i])
+        # print(keyLen)
+
+        for j in range(keyLen-1):
+            if key_pd.loc[i][j] == 0:
+                tempKK.append(0)
+                continue
+            value = tuple(key_pd.loc[i][j].split("'"))
+            value2 = tuple(value[2].split(","))
+            value2 = tuple(value2[1].split(")"))
+            value2 = tuple(value2[0].split(" "))
+
+            tempKK.append(value[1])
+            if j == 4:
+                break
+        # print(tempKK)
+        key_pd.drop(i, inplace=True)
+        key_pd.loc[i] = tempKK
+        # print(key_pd)
+
+
 
 # 함수: 해당 검색어에 대한 정보 추출
 def rel_func(term):
@@ -129,14 +235,15 @@ def rel_func(term):
     rel_term = list()
     varbreak = 0
     for i in range(key_Len):
-        if term == key_pd[i]['key']:
+        if term == key_pd.iloc[i]['word']:
             varbreak = 0
-            keyLen = len(key_pd[i])
+            # print(key_pd.iloc[i])
+            keyLen = len(key_pd.iloc[i])
             for j in range(0, keyLen - 1):
-                if key_pd[i][j] == 0:
+                if key_pd.loc[i][j] == 0:
                     continue
-                value = tuple(key_pd[i][j].split("'"))
-                rel_term.append(value[1])
+                rel_term.append(key_pd.iloc[i][j])
+            # print(rel_term)
             break
         else:
             varbreak = 1
@@ -145,49 +252,247 @@ def rel_func(term):
 ################################# 빈도 분석 #############################################
 
 # 빈도 엑셀 파일 불러오기
-date_pd = pd.read_excel('News_date.xlsx')
-print(date_pd)
+# date_pd = pd.read_excel('News_date.xlsx')
+# print(date_pd)
+
+newsD = pd.read_excel("News_date.xlsx")
+print("newsD")
+print(newsD)
+
+wordD2 = pd.read_excel("word2_date.xlsx")
+print("wordD2")
+print(wordD2)
+
+wordD4 = pd.read_excel("word4_date.xlsx")
+# print("wordD4")
+# print(wordD4)
+
+finalD = pd.concat([newsD, newsD, wordD2, wordD4])
+print("finalM")
+
+print(finalD["Unnamed: 0"])
+finalD = finalD.rename({'Unnamed: 0': '0'}, axis=1)
+# print(finalD)
+
+finalD = finalD.fillna(0)
+# print(finalD)
+
+labelD = list(finalD.columns)
+labelD = sorted(labelD)
+# print(labelD)
+
+finalD = finalD[labelD]
+# print(finalD)
+
+# finalD = finalD.rename({'0': 'key'}, axis=1)
+# print(finalD)
+
+
+del labelD[0]
+print(labelD)
+print(len(labelD))
+
+
+# finalD.sort_values(by='word', ascending=True)
+print("합치고 정렬")
+finalD = finalD.sort_values(by='0', axis=0, ascending=True)
+print(finalD)
+
+finalD = finalD.reset_index(drop=True)
+print(finalD)
+
+
+# 중족 데이터 받아오기
+tempD = finalD[finalD['0'].duplicated()]
+# print(tempD)
+# print(tempD['0'])
+
+for i in tempD.index:
+    tempDD = list()
+
+    # 중복 키워드 받아오기
+    tempDD.append(finalD.loc[i]['0'])
+    # print(tempDD)
+    # 중복 빈도수 더하기
+    for j in labelD:
+        tempDD.append(finalD.loc[i][j]+finalD.loc[i-1][j])
+    # print(tempDD)
+
+    # 기존 데이터 삭제
+    finalD.drop(i, inplace=True)
+    finalD.drop(i-1, inplace=True)
+
+    # 중복 검색어 빈도합 추가
+    finalD.loc[i]=tempDD
+    # print(finalD)
+
+
+#------------------------------------------
+date_pd = pd
+date_pd = finalD
 
 # 신어 개수
 dateLen = len(date_pd)
 
 # NaN 값 0으로 변환
-date_pd = date_pd.fillna(0)
+# date_pd = date_pd.fillna(0)
 
 # 날짜 순으로 정렬
-date_pd = date_pd.sort_index(axis=1)
+# date_pd = date_pd.sort_index(axis=1)
 
 # 컬럼(커뮤니티, 신문사, key) 가져와서 key 빼고 저장: 그래프 labels에 쓰일 데이터
 labelDate = list(date_pd.columns)
-del labelDate[13]
+del labelDate[0]
 
-# 함수: 해당 검색어에 대한 정보 추출
+
 def date_func(term):
     global dataDate
     dataDate = list()
+    print(date_pd)
     for i in range(dateLen):
-        if term == date_pd['key'][i]:
-            dataDate = list(date_pd.loc[i])
-            del dataDate[13]
+        print('for')
+        # print(date_pd['0'][i])
+        if term == date_pd.iloc[i]['0']:
+            dataDate = list(date_pd.iloc[i])
+            print(dataDate)
+            del dataDate[0]
             break
     return dataDate
 
 ################################# 이달의 KINT #############################################
 
 # 빈도 분석 파일에서 key와 마지막 달 column 가져와서 this_month에 저장
-this_month = date_pd[['key', labelDate[-1]]]
-print(this_month)
+# this_month = finalD[['0', labelDate[-1]]]
+# print(this_month)
 
 # 마지막 달 컬럼 기준이로 내리차순 정렬 > top5 추출
-this_month = this_month.sort_values(by=[labelDate[-1]], ascending=[False])
+# this_month = this_month.sort_values(by=[labelDate[-1]], ascending=[False])
 
 # 해당 검색어에 대한 정보 추출
-month_term = list(this_month['key'].head(5))
+# month_term = list(this_month['0'].head(5))
+
+
+newsM = pd.read_excel("News_month.xlsx")
+# print("newsM")
+# print(newsM)
+
+word2 = pd.read_excel("word2_month.xlsx")
+# print("word2")
+# print(word2)
+
+word4 = pd.read_excel("word4_month.xlsx")
+# print("word4")
+# print(word4)
+
+finalM = pd.concat([newsM, newsM, word2, word4])
+# print("finalM")
+# print(finalM["Unnamed: 0"])
+finalM = finalM.rename({'Unnamed: 0': 1}, axis=1)
+print(finalM)
+
+labelM = list(finalM.columns)
+print(labelM)
+del labelM[0]
+
+finalM = finalM.fillna(0)
+print(finalM)
+
+# 여기에 이달의 신조어 중복되는 것들 그냥 값만 더하면 된다.
+print("합치고 정렬")
+finalM = finalM.sort_values(by=1, axis=0, ascending=True)
+print(finalM)
+
+finalM = finalM.reset_index(drop=True)
+print(finalM)
+
+
+# 중족 데이터 받아오기
+tempM = finalM[finalM[1].duplicated()]
+print(tempM)
+print(tempM[1])
+
+
+for i in tempM.index:
+    tempMM = list()
+
+    # 중복 키워드 받아오기
+    tempMM.append(finalM.loc[i][1])
+    # 중복 빈도수 더하기
+    for j in labelM:
+        tempMM.append(finalM.loc[i][j]+finalM.loc[i-1][j])
+    # print(tempMM)
+
+    # 기존 데이터 삭제
+    finalM.drop(i, inplace=True)
+    finalM.drop(i-1, inplace=True)
+
+    # 중복 검색어 빈도합 추가
+    finalM.loc[i]=tempMM
+    # print(finalM)
+
+# 내림차순 정렬
+finalM = finalM.sort_values(by=0, axis=0, ascending=False)
+# print(finalM)
+# top5 추출
+month_term = list(finalM[1].head(5))
+# print(month_term)
 
 ################################# 비율 분석 #############################################
 
+# 오늘의유머베스트오브베스트 : 1
+# 오늘의유머베스트게시판 : 2
+#
+# 일베일간베스트 : 3
+# 일베정치/시사 : 201
+#
+# 디시인사이드야구갤러리 : 4
+# 디시인사이드인터넷방송갤러리 : 100
+# 디시인사이드남자연예인갤러리 : 101
+# 디시인사이드여자연예인갤러리 : 102
+#
+# 뽐뿌_자유게시판 : 5
+#
+# 네이트판_10대게시판 : 6
+# 네이트판20대게시판 :7
+# 네이트판톡커들의선택 : 8
+#
+# 인스티즈이슈 : 103
+#
+# 보배드림정치 : 200
+
+wordR2 = pd.read_excel('word2_ref.xlsx')
+wordR4 = pd.read_excel('word4_ref.xlsx')
+wordR = pd.concat([wordR2, wordR4])
+print(wordR)
+
+wordR.columns = ["word","d1", "d2", "i1", "p1", "t2", "d3", "n3", "n1", "n2", "t1", "b1", "i2"]
+print(wordR)
+
+wordR = wordR.fillna(0)
+print(wordR)
+
+wordR = wordR.sort_values(by='word', axis=0, ascending=True)
+print(wordR)
+
+wordR = wordR.reset_index(drop=True)
+print(wordR)
+
+wordRR = pd
+# wordRR['word'] = wordR.apply(lambda x: x.word, axis='columns')
+wordR['오늘의유머'] = wordR.apply(lambda x:x.t1+x.t2, axis='columns')
+wordR['일간베스트'] = wordR.apply(lambda x:x.i1+x.i2, axis='columns')
+wordR['디시인사이드'] = wordR.apply(lambda x:x.d1+x.d2+x.d3, axis='columns')
+wordR['뽐뿌'] = wordR["p1"]
+wordR['네이트판'] = wordR.apply(lambda x:x.n1+x.n2+x.n3, axis='columns')
+wordR['보배드림'] = wordR["b1"]
+print(wordR)
+
+wordR.drop(["d1", "d2", "i1", "p1", "t2", "d3", "n3", "n1", "n2", "t1", "b1", "i2"], axis='columns', inplace=True)
+print(wordR)
+
 # 비율 엑셀 파일 불러오기
 ref_pd = pd.read_excel('News_ref.xlsx')
+print(ref_pd)
 
 # 신어 개수
 refLen = len(ref_pd)
@@ -195,22 +500,127 @@ refLen = len(ref_pd)
 # NaN 값 0으로 변환
 ref_pd = ref_pd.fillna(0)
 
+ref_pd = ref_pd.rename({'Unnamed: 0': 0}, axis=1)
+print(ref_pd)
+
 # column(년월) 순 정렬
 ref_pd = ref_pd.sort_index(axis=1)
+print(ref_pd)
 
-# 한겨레 : 300, 경향신문 : 301, 매일경제 : 302, 조선일보 : 303, 디지털타임스 : 304, 동아일보 : 305, SBS뉴스 : 306, 한국경제 : 307
-labelRef = ["한겨레", "경향신문", "매일경제", "조선일보", "디지털타임스", "동아일보", "SBS뉴스", "한국경제"]
 
-# 함수: 해당 검색어에 대한 정보 추출
+ref_pd['한겨레'] = ref_pd[300]
+ref_pd['경향신문'] = ref_pd[301]
+ref_pd['매일경제'] = ref_pd[302]
+ref_pd['조선일보'] = ref_pd[303]
+ref_pd['디지털타임스'] = ref_pd[304]
+ref_pd['동아일보'] = ref_pd[305]
+ref_pd['SBS뉴스'] = ref_pd[306]
+print(ref_pd)
+
+ref_pd.drop([300, 301, 302, 303, 304, 305, 306], axis='columns', inplace=True)
+print(ref_pd)
+
+ref_pd['뉴스'] = ref_pd.apply(lambda x: x.한겨레 + x.경향신문 + x.매일경제 + x.조선일보 + x.디지털타임스 + x.동아일보 + x.SBS뉴스, axis='columns')
+print(ref_pd)
+
+
+
+# # 함수: 해당 검색어에 대한 정보 추출
+# def ref_func(term):
+#     global dataRef
+#     dataRef = list()
+#     for i in range(refLen):
+#         if term == ref_pd[0][i]:
+#             for j in range(300, 307):
+#                 dataRef.append(ref_pd[j][i]*100)
+#             break
+#     return dataRef
+
+flagN = 0
+flagC = 0
+# dataRef = list()
+# labelRef = list()
+news_i = 0
+cumm_i = 0
+
+term='가위충'
 def ref_func(term):
+    global flagN, flagC
     global dataRef
-    dataRef = list()
-    for i in range(refLen):
-        if term == ref_pd[0][i]:
-            for j in range(300, 307):
-                dataRef.append(ref_pd[j][i]*100)
+    global labelRef
+
+    print(ref_pd[0])
+    for news_i in range(len(ref_pd.iloc[0])):
+        if term == ref_pd[0][news_i]:
+            print(ref_pd[0][news_i])
+            flagN = 1
+            print("flagN")
             break
-    return dataRef
+
+    print(wordR['word'])
+    for cumm_i in range(len(wordR['word'])):
+        if term == wordR['word'][cumm_i]:
+            print(wordR['word'][cumm_i])
+            flagC = 1
+            print("flagC")
+            break
+
+    if flagN+flagC == 2:
+        print("flagN+flagC")
+        labelRef = wordR.columns.tolist()
+        print(labelRef)
+        print(len(labelRef))
+
+        for j in range(len(labelRef)-1):
+            labelRef.append(wordR.loc[labelRef[j]][cumm_i])
+            sum +=labelRef[j]
+
+        labelRef.append(ref_pd['뉴스'][news_i])
+        sum+=labelRef[j]
+
+
+    else:
+        if flagN == 1:
+            # 한겨레 : 300, 경향신문 : 301, 매일경제 : 302, 조선일보 : 303, 디지털타임스 : 304, 동아일보 : 305, SBS뉴스 : 306, 한국경제 : 307
+            labelRef = ref_pd.columns.tolist()
+            print(len(labelRef))
+            print(labelRef)
+            del labelRef[len(labelRef)-1]
+            del labelRef[0]
+            refLen = len(labelRef)
+            print(labelRef)
+            dataRef = list()
+
+            print(news_i)
+            print(ref_pd[0][news_i])
+
+            if term == ref_pd[0][news_i]:
+                for j in labelRef:
+                    dataRef.append(ref_pd[j][news_i] * 100)
+            print(dataRef)
+            return dataRef
+
+        else:
+            labelRef = wordR.columns.tolist()
+            print(len(labelRef))
+            del labelRef[0]
+            refLen = len(labelRef)
+            print(labelRef)
+            print(len(labelRef))
+
+            print(cumm_i)
+            print(wordR['word'][cumm_i])
+
+            if term == wordR['word'][cumm_i]:
+                for j in labelRef:
+                    dataRef.append(wordR[j][cumm_i] * 100)
+            print("dataRef",dataRef)
+            return dataRef
+
+
+
+ref_func(term)
+
 
 ################################### 메인 페이지 ####################################################
 
@@ -292,10 +702,11 @@ def search():
                     sens = sent_func(term)
                     # 빈도 분석 결과 받아오기
                     dataRef = ref_func(term)
-                    # 커뮤니티, 뉴스별 비율 받아오기
-                    dataDate = date_func(term)
                     # 예문 받아오기
                     sentence = exam_func(term)
+                    # 커뮤니티, 뉴스별 비율 받아오기
+                    dataDate = date_func(term)
+
                     # search.html: 검색 결과 보여주기
                     return render_template('search.html', sent1=sens[0], sent2=sens[1], sentence=sentence,
                                            term=term, rel_term=rel_term, labelRef=labelRef, labelDate=labelDate,
@@ -322,13 +733,15 @@ def search():
             sens = sent_func(term)
             # 빈도 분석 결과 받아오기
             dataRef = ref_func(term)
-            # 커뮤니티, 뉴스별 비율 받아오기
-            dataDate = date_func(term)
             # 예문 받아오기
             sentence = exam_func(term)
+            # 커뮤니티, 뉴스별 비율 받아오기
+            dataDate = date_func(term)
+
             # search.html: 검색 결과 보여주기
             return render_template('search.html', sent1=sens[0], sent2=sens[1], sentence=sentence,
-                                   term=term, rel_term=rel_term, labelRef=labelRef, labelDate = labelDate, dateDate = dataDate, dataRef = dataRef)
+                                   term=term, rel_term=rel_term, labelRef=labelRef, labelDate=labelDate,
+                                   dataDate=dataDate, dataRef=dataRef)
 
 
 
