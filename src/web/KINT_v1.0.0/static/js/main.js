@@ -8,7 +8,8 @@
 
 	var	$window = $(window),
 		$body = $('body'),
-		$main = $('#main');
+		$main = $('#main'),
+		$document = $(document);
 
 	// Breakpoints.
 	breakpoints({
@@ -140,6 +141,8 @@
 		});
 
 	});
+
+
 
 
 
