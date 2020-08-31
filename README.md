@@ -14,7 +14,7 @@
 
 이 프로젝트는 새로 생성된 단어를 감지하고 이를 사전에 자동으로 업데이트하는 작업을 진행합니다.
 
-이를 위해 첫 번째 모델은 새로 만들어진 단어를 감지하고 두 번째 모델은 단어에 대한 감성 분석 및 예제를 추출하는 것으로 총 2가지 모델을 구축합니다.  
+이를 위해 첫 번째 모델은 새로 만들어진 단어를 감지하고 두 번째 모델은 단어에 대한 감성 분석 및 예문을 추출하는 것으로 총 2가지 모델을 구축합니다.  
 
 # 진행         
 다음은 프로젝트의 자동화 시스템 구성도입니다.
@@ -38,7 +38,17 @@
       - 보배드림 : 정치 커뮤니티
     - 엔터테인먼트 크롤러
       - dcinside : 인터넷방송 갤러리, 남자/여자 연예인 갤러리
-      - instize : 이슈  
+      - instize : 이슈
+    - 뉴스 크롤러
+      - 한겨레
+      - 경향신문
+      - 매일경제
+      - 조선일보
+      - 디지털타임스
+      - 동아일보
+      - SBS뉴스
+      - 한국경제
+    
     
 2. 텍스트 데이터 전처리 단계
     - soynlp 라이브러리를 사용하여 용어를 추출합니다.
@@ -68,8 +78,10 @@
    - 텍스트 데이터를 벡터화하여 표현합니다.
 
 3. 감성 분석 및 예문 출력 단계
-   - 감성 분석을 위해 준지도 학습과 LSTM Model을 사용합니다.
-   - 예문 출력을 위해 N-gram과 BPE을 사용합니다.         
+   - 신어 감성 분석 API (신어 감성 분석 모델)는 Point Mutual Information (PMI) 을 기반으로 신어에 대한 감성을 분석하며  관련 키워드를 추출합니다.
+   - 신어 예문추출 API(신어 예문 추출 모델)는 Bidirectional GRU을 통해 예문을 추출하고, N-grame을 활용하여 추출된 예문의 띄어쓰기를 적용합니다. 
+
+        
        
        
        
@@ -116,7 +128,16 @@ For this, the 1st Model detects new internet terms, and the 2nd Model extracts s
       - 보배드림 : 정치커뮤니티
     - Entertainment Crawler
       - dcinside : 인터넷방송 갤러리, 남자/여자연예인 갤러리
-      - instize : 이슈  
+      - instize : 이슈 
+    - News Crawler
+      - 한겨레
+      - 경향신문
+      - 매일경제
+      - 조선일보
+      - 디지털타임스
+      - 동아일보
+      - SBS뉴스
+      - 한국경제
     
 2. Text data preprocessing step
     - We use the soynlp library to extract terms.
@@ -144,8 +165,9 @@ For this, the 1st Model detects new internet terms, and the 2nd Model extracts s
    - Text data vectorize.
 
 3. Sentiment analysis and example sentence extracting step
-   - We use semi-supervised learning and LSTM Model for sentiment analysis
-   - We use N-gram and Byte Pair Encoding (BPE) for extracting of the example sentence
+   - The New Internet Terms Sensitivity Analysis API (New Internet Terms Sensitivity Analysis Model) analyzes the sensitivity of new internet terms based on Point Mutual Information (PMI) and extracts related keywords.
+
+   - The New Internet Terms sample extraction API (New Internet Terms sample extraction model) extracts the sample through the Bidirectional GRU and applies the spacing of the extracted sample using N-Gram.
 
 
                                                                                                               
