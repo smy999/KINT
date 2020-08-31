@@ -578,13 +578,14 @@ def ref_func(term):
 
         # 그래프 라벨
         labelRef = wordR.columns.tolist()
-        print(labelRef)
-        print(len(labelRef))
+        del labelRef[0]
+        # print(labelRef)
+        # print(len(labelRef))
         labelRef.append("뉴스")
 
-
+        # print(wordR)
         for j in range(len(labelRef)-1):
-            dataRef.append(wordR.loc[labelRef[j]][cumm_i])
+            dataRef.append(wordR[labelRef[j]][cumm_i])
         dataRef.append(ref_pd['뉴스'][news_i])
 
         data_sum = 0
