@@ -58,7 +58,7 @@ dataRef = list()
 
 # 감성 분석 엑셀 파일 불러오기
 sent_pd = pd.read_excel('sentiment_final.xlsx')
-print(sent_pd)
+# print(sent_pd)
 
 # 신어 개수
 sentLen = len(sent_pd)
@@ -84,24 +84,29 @@ def sent_func(term):
 
 
 ################################# 예문 출력 #############################################
-
+# print("###################### 예문 출력 ###################################")
 # 감성 분석 엑셀 파일 불러오기
-exam_pd = pd.read_excel('News_example.xlsx')
+exam1_pd = pd.read_excel('News_example.xlsx')
+# print(exam_pd)
+
+exam2_pd = pd.read_excel('Total_wsexample.xlsx')
+
+exam_pd = pd.concat([exam1_pd, exam2_pd])
 print(exam_pd)
 
 # 신어 개수
 examLen = len(exam_pd)
-print(examLen)
+# print(examLen)
 
 
 # 함수: 해당 검색어에 대한 정보 추출
 def exam_func(term):
     global exams
     exams = ""
-    for i in range(sentLen):
-        if term == exam_pd['Word'][i]:
+    for i in range(len(exam_pd)):
+        if term == exam_pd.iloc[i]['Word']:
             # 예문 가져오기
-            exams = exam_pd[0][i]
+            exams = exam_pd.iloc[i][0]
             # 감성 분석 결과 가져오기
             break
     print(exams)
@@ -109,41 +114,40 @@ def exam_func(term):
 
 
 ############################### 연관 키워드 #############################################
-print("############################### 연관 키워드 #############################################")
+# print("############################### 연관 키워드 #############################################")
 # 연관 키워드 엑셀 파일 불러오기
 newsK = pd.read_excel('News_key.xlsx')
 commK = pd.read_excel('key.xlsx')
 key_pd = pd
 key_pd = pd.concat([newsK, commK])
-print(key_pd)
+# print(key_pd)
 
-# 신어 개수(= row 수)
-key_Len = len(key_pd)
-print(key_Len)
+
 
 key_pd = key_pd.rename({'Unnamed: 0': 'word'}, axis=1)
-print(key_pd)
+# print(key_pd)
 
 key_pd = key_pd.sort_values(by='word', axis=0, ascending=True)
-print(key_pd)
+# print(key_pd)
 key_pd = key_pd.reset_index(drop=True)
-print(key_pd)
+# print(key_pd)
 # 편의를 위해 row와 column 뒤집기
 # key_pd = key_pd.transpose()
 # print(key_pd)
 
 # Nan 값 오류를 방지하기 위해 0으로 값 변경
 key_pd = key_pd.fillna(0)
-print(key_pd)
+# print(key_pd)
 
 # 함수: 해당 검색어에 대한 정보 추출
 
 rel_term = list()
 
-tempK = key_pd[key_pd['word'].duplicated()]
-print(tempK)
 
-for i in range(key_Len):
+tempK = key_pd[key_pd['word'].duplicated()]
+# print(tempK)
+
+for i in range(len(key_pd)):
     rel_dict = dict()
 
     if i+1 in tempK.index:
@@ -230,25 +234,30 @@ for i in range(key_Len):
 
 # 함수: 해당 검색어에 대한 정보 추출
 def rel_func(term):
+    print("함수시작")
     global rel_term
-    global varbreak
     rel_term = list()
+    global varbreak
     varbreak = 0
-    for i in range(key_Len):
+    for i in range(len(key_pd)-1):
+        # print(key_pd)
+        # print(key_pd['word'])
+        # print(key_pd.iloc[i]['word'])
         if term == key_pd.iloc[i]['word']:
             varbreak = 0
             # print(key_pd.iloc[i])
             keyLen = len(key_pd.iloc[i])
-            for j in range(0, keyLen - 1):
-                if key_pd.loc[i][j] == 0:
+            for j in range(0, keyLen-1):
+                if key_pd.iloc[i][j] == 0:
                     continue
                 rel_term.append(key_pd.iloc[i][j])
             # print(rel_term)
-            break
-        else:
-            varbreak = 1
+            return rel_term
+    varbreak = 1
     return rel_term
 
+
+# rel_func("가성비")
 ################################# 빈도 분석 #############################################
 
 # 빈도 엑셀 파일 불러오기
@@ -256,21 +265,25 @@ def rel_func(term):
 # print(date_pd)
 
 newsD = pd.read_excel("News_date.xlsx")
-print("newsD")
-print(newsD)
+# print("newsD")
+# print(newsD)
 
 wordD2 = pd.read_excel("word2_date.xlsx")
-print("wordD2")
-print(wordD2)
+# print("wordD2")
+# print(wordD2)
 
 wordD4 = pd.read_excel("word4_date.xlsx")
 # print("wordD4")
 # print(wordD4)
 
-finalD = pd.concat([newsD, newsD, wordD2, wordD4])
-print("finalM")
+wordD31 = pd.read_excel("word3_1_date.xlsx")
 
-print(finalD["Unnamed: 0"])
+wordD32 = pd.read_excel("word3_2_date.xlsx")
+
+finalD = pd.concat([newsD, newsD, wordD2, wordD4, wordD31, wordD31])
+# print("finalM")
+
+# print(finalD["Unnamed: 0"])
 finalD = finalD.rename({'Unnamed: 0': '0'}, axis=1)
 # print(finalD)
 
@@ -289,17 +302,17 @@ finalD = finalD[labelD]
 
 
 del labelD[0]
-print(labelD)
-print(len(labelD))
+# print(labelD)
+# print(len(labelD))
 
 
 # finalD.sort_values(by='word', ascending=True)
-print("합치고 정렬")
+# print("합치고 정렬")
 finalD = finalD.sort_values(by='0', axis=0, ascending=True)
-print(finalD)
+# print(finalD)
 
 finalD = finalD.reset_index(drop=True)
-print(finalD)
+# print(finalD)
 
 
 # 중족 데이터 받아오기
@@ -348,13 +361,13 @@ del labelDate[0]
 def date_func(term):
     global dataDate
     dataDate = list()
-    print(date_pd)
+    # print(date_pd)
     for i in range(dateLen):
-        print('for')
+        # print('for')
         # print(date_pd['0'][i])
         if term == date_pd.iloc[i]['0']:
             dataDate = list(date_pd.iloc[i])
-            print(dataDate)
+            # print(dataDate)
             del dataDate[0]
             break
     return dataDate
@@ -384,32 +397,36 @@ word4 = pd.read_excel("word4_month.xlsx")
 # print("word4")
 # print(word4)
 
-finalM = pd.concat([newsM, newsM, word2, word4])
+word31 = pd.read_excel("word3_1_month.xlsx")
+
+word32 = pd.read_excel("word3_2_month.xlsx")
+
+finalM = pd.concat([newsM, newsM, word2, word4, word31, word32])
 # print("finalM")
 # print(finalM["Unnamed: 0"])
 finalM = finalM.rename({'Unnamed: 0': 1}, axis=1)
-print(finalM)
+# print(finalM)
 
 labelM = list(finalM.columns)
-print(labelM)
+# print(labelM)
 del labelM[0]
 
 finalM = finalM.fillna(0)
-print(finalM)
+# print(finalM)
 
 # 여기에 이달의 신조어 중복되는 것들 그냥 값만 더하면 된다.
-print("합치고 정렬")
+# print("합치고 정렬")
 finalM = finalM.sort_values(by=1, axis=0, ascending=True)
-print(finalM)
+# print(finalM)
 
 finalM = finalM.reset_index(drop=True)
-print(finalM)
+# print(finalM)
 
 
 # 중족 데이터 받아오기
 tempM = finalM[finalM[1].duplicated()]
-print(tempM)
-print(tempM[1])
+# print(tempM)
+# print(tempM[1])
 
 
 for i in tempM.index:
@@ -462,20 +479,22 @@ month_term = list(finalM[1].head(5))
 
 wordR2 = pd.read_excel('word2_ref.xlsx')
 wordR4 = pd.read_excel('word4_ref.xlsx')
-wordR = pd.concat([wordR2, wordR4])
-print(wordR)
+wordR31 = pd.read_excel('word3_1_ref.xlsx')
+wordR32 = pd.read_excel('word3_2_ref.xlsx')
+wordR = pd.concat([wordR2, wordR4, wordR31, wordR32])
+# print(wordR)
 
 wordR.columns = ["word","d1", "d2", "i1", "p1", "t2", "d3", "n3", "n1", "n2", "t1", "b1", "i2"]
-print(wordR)
+# print(wordR)
 
 wordR = wordR.fillna(0)
-print(wordR)
+# print(wordR)
 
 wordR = wordR.sort_values(by='word', axis=0, ascending=True)
-print(wordR)
+# print(wordR)
 
 wordR = wordR.reset_index(drop=True)
-print(wordR)
+# print(wordR)
 
 wordRR = pd
 # wordRR['word'] = wordR.apply(lambda x: x.word, axis='columns')
@@ -488,7 +507,7 @@ wordR['보배드림'] = wordR["b1"]
 print(wordR)
 
 wordR.drop(["d1", "d2", "i1", "p1", "t2", "d3", "n3", "n1", "n2", "t1", "b1", "i2"], axis='columns', inplace=True)
-print(wordR)
+# print(wordR)
 
 # 비율 엑셀 파일 불러오기
 ref_pd = pd.read_excel('News_ref.xlsx')
@@ -525,32 +544,21 @@ print(ref_pd)
 
 
 
-# # 함수: 해당 검색어에 대한 정보 추출
-# def ref_func(term):
-#     global dataRef
-#     dataRef = list()
-#     for i in range(refLen):
-#         if term == ref_pd[0][i]:
-#             for j in range(300, 307):
-#                 dataRef.append(ref_pd[j][i]*100)
-#             break
-#     return dataRef
-
-flagN = 0
-flagC = 0
 # dataRef = list()
 # labelRef = list()
-news_i = 0
-cumm_i = 0
 
-term='가위충'
 def ref_func(term):
+    print("비율함수")
     global flagN, flagC
     global dataRef
     global labelRef
 
+    news_i = 0
+    cumm_i = 0
+    flagN = 0
+    flagC = 0
     print(ref_pd[0])
-    for news_i in range(len(ref_pd.iloc[0])):
+    for news_i in range(len(ref_pd)):
         if term == ref_pd[0][news_i]:
             print(ref_pd[0][news_i])
             flagN = 1
@@ -558,7 +566,7 @@ def ref_func(term):
             break
 
     print(wordR['word'])
-    for cumm_i in range(len(wordR['word'])):
+    for cumm_i in range(len(wordR)):
         if term == wordR['word'][cumm_i]:
             print(wordR['word'][cumm_i])
             flagC = 1
@@ -567,19 +575,32 @@ def ref_func(term):
 
     if flagN+flagC == 2:
         print("flagN+flagC")
+
+        # 그래프 라벨
         labelRef = wordR.columns.tolist()
         print(labelRef)
         print(len(labelRef))
+        labelRef.append("뉴스")
+
 
         for j in range(len(labelRef)-1):
-            labelRef.append(wordR.loc[labelRef[j]][cumm_i])
-            sum +=labelRef[j]
+            dataRef.append(wordR.loc[labelRef[j]][cumm_i])
+        dataRef.append(ref_pd['뉴스'][news_i])
 
-        labelRef.append(ref_pd['뉴스'][news_i])
-        sum+=labelRef[j]
+        data_sum = 0
+        for i in range(len(dataRef)):
+            data_sum += dataRef[i]
 
+        for i in range(len(dataRef)):
+            dataRef[i] = (dataRef[i] * 100) / data_sum
 
+        print(dataRef)
+
+        return dataRef
+
+    # 뉴스와 커뮤니티 한 곳에만 존재하는 신어일 때
     else:
+        # 뉴스에만 존재하는 신어
         if flagN == 1:
             # 한겨레 : 300, 경향신문 : 301, 매일경제 : 302, 조선일보 : 303, 디지털타임스 : 304, 동아일보 : 305, SBS뉴스 : 306, 한국경제 : 307
             labelRef = ref_pd.columns.tolist()
@@ -590,16 +611,27 @@ def ref_func(term):
             refLen = len(labelRef)
             print(labelRef)
             dataRef = list()
-
+            #
             print(news_i)
             print(ref_pd[0][news_i])
 
             if term == ref_pd[0][news_i]:
                 for j in labelRef:
-                    dataRef.append(ref_pd[j][news_i] * 100)
+                    dataRef.append(ref_pd[j][news_i])
             print(dataRef)
-            return dataRef
 
+            data_sum = 0
+            for i in range(len(dataRef)):
+                data_sum += dataRef[i]
+
+            for i in range(len(dataRef)):
+                dataRef[i] = (dataRef[i]*100)/data_sum
+
+            print(dataRef)
+
+
+            return dataRef
+        # 커뮤니티에만 존재하는 신어
         else:
             labelRef = wordR.columns.tolist()
             print(len(labelRef))
@@ -613,13 +645,30 @@ def ref_func(term):
 
             if term == wordR['word'][cumm_i]:
                 for j in labelRef:
-                    dataRef.append(wordR[j][cumm_i] * 100)
-            print("dataRef",dataRef)
+                    dataRef.append(wordR[j][cumm_i])
+
+            data_sum = 0
+            for i in range(len(dataRef)):
+                data_sum += dataRef[i]
+
+            for i in range(len(dataRef)):
+                dataRef[i] = (dataRef[i] * 100) / data_sum
+
+            print(dataRef)
+
             return dataRef
 
+# # 함수: 해당 검색어에 대한 정보 추출
+# def ref_func(term):
+#     global dataRef
+#     dataRef = list()
+#     for i in range(refLen):
+#         if term == ref_pd[0][i]:
+#             for j in range(300, 307):
+#                 dataRef.append(ref_pd[j][i]*100)
+#             break
+#     return dataRef
 
-
-ref_func(term)
 
 
 ################################### 메인 페이지 ####################################################
@@ -653,6 +702,7 @@ def home():
 @app.route('/', methods=['POST', 'GET'])
 def search():
     global month_term
+    global varbreak
     # 검색 기본 페이지 > search2.html
     render_template('search2.html', month_term=month_term)
     # 현재 실행 위치 출력
@@ -674,8 +724,6 @@ def search():
 
         # word_func(term)
 
-        # 검색어에 맞는 연관 키워드 추출
-        rel_term = rel_func(term)
 
         # 1. 입력된 검색어가 없을 때 처리방법
         if len(term) == 0:
@@ -719,6 +767,9 @@ def search():
                 return render_template("search2.html", month_term=month_term, result="")
 
 
+
+        # 검색어에 맞는 연관 키워드 추출
+        rel_term = rel_func(term)
         # 2. 입력된 검색어가 있을 때
         # 2-1. 위에서 필더링한 검색어의 결과가 없을 때 > 검색 페이지로 이동(search2.hmtl)
         if varbreak == 1:
