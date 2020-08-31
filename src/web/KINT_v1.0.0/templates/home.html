@@ -54,7 +54,7 @@
         <!-- 이달의 KINT -->
         <div class="search_sub" style="margin: 0 auto; text-align: center">
             <span style="color: #ffffff">이달의 KINT</span>
-            {%  for m in month_term %} <!-- 집가서 꼭하기 -->
+            {%  for m in month_term %}
                 <input type="hidden" name="mon0" value="{{ m }}">
                 <input class="mon_bnt" type="submit" name="mon" value=#{{ m }}>
             {%  endfor %}
@@ -80,38 +80,6 @@
                 <h2>KINT API</h2>
                 <p>신어 감지, 예문추출, 감성분석 Model과 신어 DB를 통합 Open API로 제공합니다.</p>
             </header>
-
-
-            <!--
-                        <div>
-                            <hr>
-
-                            <div style="padding-left: 100px; width: 100%; text-align: left; font-size: 1.5em; font-weight: 500">Model</div>
-                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                                <span style="font-size: 1.2em; font-weight: 800; background-color: #485F8E; color: #ffffff">신어 감지 API</span>
-                                <p style="font-weight: 300">약 1300만개의 분야별 데이터를 수집하여 soynlp 기반으로 문장이나 문서를 용어 단위로 분리 후 KINT의 11개의 통계변수에 따라 신어 감지</p>
-                            </div>
-                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                                <span style="font-size: 1.2em; font-weight: 800; background-color: #F7D33B; color: #ffffff">감성 분석 API</span>
-                                <p style="font-weight: 300">Point Mutual Information(PMI) 기술을 기반으로 신어에 대한 감성을 분석하고 용어간의 연과도를 분석하여 연관 키워드를 추출</p>
-                            </div>
-                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                                <span style="font-size: 1.2em; font-weight: 800; background-color: #ED7C59; color: #ffffff">예문 추출 API</span>
-                                <p style="font-weight: 300">Bidirectional GRU와 N-gram을 기반으로 신어의 예문을 추출하여 신어가 사용되는 상황과 뜻 파악</p>
-                            </div>
-
-                            <hr>
-
-                            <div style="padding-left: 100px; width: 100%; text-align: left; font-size: 1.5em; font-weight: 500">DB</div>
-                            <div style="padding-left: 300px; padding-right: 100px; text-align: left; padding-bottom: 20px">
-                                <span style="font-size: 1.2em; font-weight: 800; background-color: #0B5D5D; color: #ffffff">신어 DB API</span>
-                                <p style="font-weight: 300">KINT의 3가지 Model를 통해 정제된 신어 데이터와 신어에 대한 통계분석 결과, 감정분석 결과, 연관 키워드 및 예문추출 결과를 제공</p>
-                            </div>
-
-                            <hr>
-
-                        </div>
-            -->
 
             <!-- api content -->
             <div id="api_desc" style="width: 100%; margin: 0 auto; padding-left: 100px; padding-right: 100px">
@@ -230,7 +198,7 @@
         </section>
 
         <!-- Why KINT -->
-        <!--
+
         <section id="cta" class="main special">
 
 
@@ -239,50 +207,74 @@
                 <p>최근 다양한 분야에서 빅데이터의 활용과 분석에 대한 중요성이 대두됨에 따라, 뉴스기사와 SNS상의 게시글과 같은 비정형 데이터의 자연어 처리 기술에 대한 관심이 높아지고 있습니다. 하지만, 한국어는 영어와는 달리 자연어 처리가 어려운 교착어로써 정보화나 정보시스템에 활용이 어렵습니다. 이에 1조는 인터넷 언어를 분석 시 활용이 가능한 신어 DB를 구축하였고, 누구나 연구와 실무에 사용할 수 있도록 신어 Open API서비스를 제공합니다.</p>
             </header>
 
-            <ul class="statistics">
-                <li class="style1">
-                    <span class="icon solid fa-code-branch"></span>
-                    <strong>공공성</strong> Etiam
-                </li>
-                <li class="style2">
-                    <span class="icon fa-folder-open"></span>
-                    <strong>사회적</strong> Magna
-                </li>
-                <li class="style3">
-                    <span class="icon solid fa-signal"></span>
-                    <strong>언어학</strong> Tempus
-                </li>
-                <li class="style4">
-                    <span class="icon solid fa-laptop"></span>
-                    <strong>통합성</strong> Aliquam
-                </li>
-                <li class="style5">
-                    <span class="icon fa-gem"></span>
-                    <strong>상업성</strong> Nullam
-                </li>
-            </ul>
 
--->
+            <div class="why-kint">
+
+                <div style="padding-left: 50px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                    <span style="font-size: 1.2em; font-weight: 600; color: #000000">언어학</span>
+                    <p style="font-weight: 400">현대인의 언어생활을 분석하는 데 도움이 되고 신어 DB화를 통해 자연어처리 연구에 기여할 수 있습니다.</p>
+                </div>
+                <div style="padding-left: 50px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                    <span style="font-size: 1.2em; font-weight: 600; color: #000000">사회성</span>
+                    <p style="font-weight: 400">빠르게 등장하는 신어들을 DB화 할 수 있어서 당대 문화를 이해하는데 도움이 되며 당대 문화의 특수성과 다양성을 이해할 수 있습니다.</p>
+                </div>
+                <div style="padding-left: 50px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                    <span style="font-size: 1.2em; font-weight: 600; color: #000000">공공성</span>
+                    <p style="font-weight: 400">방송통신위원회와 같은 정부 기관에서 금칙어나 부적절한 언어를 검열할 때 주관적인 단어해석을 객관화할 수 있으며 시간 단축이 가능합니다. </p>
+                </div>
+                <div style="padding-left: 50px; padding-right: 100px; text-align: left; padding-bottom: 20px">
+                    <span style="font-size: 1.2em; font-weight: 600; color: #000000">상업성</span>
+                    <p style="font-weight: 400">기업은 사회의 트렌드를 내포하고 있는 신어 분석을 통해 큰 비용을 들이지 않고도 세련된 이미지를 적용하고 젊은 층 수요를 확대하고 있습니다.</p>
+                </div>
 
 
+            </div>
         </section>
-
-
-
-        <!-- Get Started -->
-        <section id="cta" class="main special">
-
-            <footer class="major">
-
-
-                <ul class="actions special">
-                    <li><a href="#" class="button primary">Go Github</a></li>
-                    <li><a href="#" class="button">emails</a></li>
-                </ul>
-            </footer>
-        </section>
-
     </div>
+
+
+    <!-- Site footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <!--
+                <div class="col-sm-12 col-md-6">
+                    <h6>About</h6>
+                    <p class="text-justify">최근 다양한 분야에서 빅데이터의 활용과 분석에 대한 중요성이 대두됨에 따라, 뉴스기사와 SNS상의 게시글과 같은 비정형 데이터의 자연어 처리 기술에 대한 관심이 높아지고 있습니다. 하지만, 한국어는 영어와는 달리 자연어 처리가 어려운 교착어로써 정보화나 정보시스템에 활용이 어렵습니다. 이에 1조는 인터넷 언어를 분석 시 활용이 가능한 신어 DB를 구축하였고, 누구나 연구와 실무에 사용할 수 있도록 신어 Open API서비스를 제공합니다.</p>
+                </div>
+                -->
+
+                <div style="width: 15%; padding-right: 20px;">
+                    <h6>Project</h6>
+                </div>
+                <div style="width: 25%; padding-right: 20px; padding-right: 50px">
+                    <ul class="footer-links">
+                        <li>한국 데이터 산업 진흥원</li>
+                        <li>데이터 청년 캠퍼스 고려대학교</li>
+                    </ul>
+                </div>
+
+                <div style="width: 20%;padding-right: 50px">
+                    <h6>Contact Us</h6>
+
+                </div>
+                <div style="width: 13%; ">
+                    <ul class="footer-links">
+                        <li>gozj3319@naver.com</li>
+                        <li>210112yynim@naver.com</li>
+                    </ul>
+
+                </div>
+                <div style="width: 13%; padding-left: 50px;">
+
+                    <ul class="footer-links">
+                        <li>juyeon.yu0511@gmail.com</li>
+                        <li>wtt5857@naver.com</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 
 
